@@ -60,7 +60,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
  addMissing:value=>set(state=>({
   shopping:[
    ...state.shopping,
-   ...value.filter(item=>!item.available&&!state.shopping.some(existing=>existing.name===item.name)).map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:'Rau củ',checked:false})),
+   ...value.filter(item=>!item.available&&!state.shopping.some(existing=>existing.name===item.name)).map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:item.category,checked:false})),
   ],
  })),
  addItem:value=>set(state=>({shopping:[...state.shopping,value]})),

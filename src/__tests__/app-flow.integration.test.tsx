@@ -2,12 +2,13 @@ import {act,fireEvent,render} from '@testing-library/react-native';
 import {router} from 'expo-router';
 import {ReactNode} from 'react';
 import AIRecommendation from '../../app/tabs/ai';
+import CookingMode from '../../app/cooking/[id]';
 import Shopping from '../../app/tabs/shopping';
 import CreateFamily from '../../app/onboarding/create-family';
 import Welcome from '../../app/onboarding/welcome';
 import Recipe from '../../app/recipe/[id]';
 import {persistMealSelection,persistShoppingSnapshot} from '../cloud-sync';
-import {initialShopping} from '../data';
+import {getLocalRecipe,initialShopping} from '../data';
 import {simulateNextRecommendationError} from '../service';
 import {useAppStore} from '../store';
 
@@ -24,6 +25,7 @@ jest.mock('react-native-safe-area-context',()=>{
  return{SafeAreaView:View,SafeAreaProvider:View,useSafeAreaInsets:()=>({top:0,right:0,bottom:0,left:0})};
 });
 jest.mock('@expo/vector-icons',()=>({Ionicons:'Ionicons'}));
+jest.mock('expo-keep-awake',()=>({useKeepAwake:jest.fn()}));
 jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve())}));
 
 const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jest.Mock};
@@ -68,8 +70,10 @@ describe('Daily Meals integration flow',()=>{
 
   mockParams={id:recommended?.id};
   const recipe=render(<Recipe/>);
-  fireEvent.press(recipe.getByLabelText(/Thêm vào danh sách mua/));
+  fireEvent.press(recipe.getByLabelText(/Thêm \d+ nguyên liệu cần mua/));
   expect(useAppStore.getState().shopping.length).toBeGreaterThan(0);
+  const expectedMissing=getLocalRecipe(recommended!.id).ingredients.filter(item=>!item.available);
+  expect(useAppStore.getState().shopping.map(item=>item.name)).toEqual(expectedMissing.map(item=>item.name));
   expect(persistShoppingSnapshot).toHaveBeenCalled();
   expect(mockRouter.push).toHaveBeenCalledWith('/tabs/shopping');
   recipe.unmount();
@@ -84,6 +88,17 @@ describe('Daily Meals integration flow',()=>{
   expect(useAppStore.getState().shopping).toHaveLength(countBeforeDelete-1);
   expect(persistShoppingSnapshot).toHaveBeenCalledTimes(3);
  },15000);
+
+ it('uses the selected meal recipe throughout Cooking Mode',async()=>{
+  mockParams={id:'pho'};
+  const recipe=getLocalRecipe('pho'),cooking=render(<CookingMode/>);
+  await advance(0);
+  expect(cooking.getByText(recipe.steps[0].description)).toBeTruthy();
+  for(let index=1;index<recipe.steps.length;index++)fireEvent.press(cooking.getByLabelText('Bước tiếp theo'));
+  fireEvent.press(cooking.getByLabelText('Hoàn thành món ăn'));
+  expect(useAppStore.getState().selectedMeals.breakfast).toMatchObject({id:'pho',status:'completed'});
+  expect(cooking.getByText('Hoàn thành món ăn!')).toBeTruthy();
+ });
 
  it('shows progressive loading and recovers from a simulated error',async()=>{
   useAppStore.setState({shopping:initialShopping});
