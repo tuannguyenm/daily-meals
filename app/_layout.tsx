@@ -1,0 +1,2 @@
+import {Stack} from 'expo-router';import {StatusBar} from 'expo-status-bar';import {SafeAreaProvider} from 'react-native-safe-area-context';import {AuthBootstrap} from '../src/auth-bootstrap';
+export default function Layout(){return <SafeAreaProvider><AuthBootstrap><StatusBar style="dark"/><Stack screenOptions={{headerShown:false,contentStyle:{backgroundColor:'#FFFDF8'}}}/></AuthBootstrap></SafeAreaProvider>}

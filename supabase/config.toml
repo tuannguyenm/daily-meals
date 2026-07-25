@@ -1,0 +1,4 @@
+project_id = "daily-meals"
+
+[functions.recommendations]
+verify_jwt = true

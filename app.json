@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Daily Meals",
+    "slug": "daily-meals",
+    "version": "1.0.0",
+    "orientation": "default",
+    "scheme": "dailymeals",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/images/app-icon-v2.png",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dailymeals.family"
+    },
+    "android": {
+      "package": "com.dailymeals.family",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon-v2.png",
+        "backgroundColor": "#FFF6E9"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-v2.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF6E9",
+          "imageWidth": 220
+        }
+      ],
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/adaptive-icon-v2.png"
+    }
+  }
+}
