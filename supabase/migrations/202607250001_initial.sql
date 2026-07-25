@@ -176,6 +176,20 @@ create policy shopping_items_all on public.shopping_items for all to authenticat
   using (exists(select 1 from public.shopping_lists l where l.id=shopping_list_id and public.is_family_member(l.family_id)))
   with check (exists(select 1 from public.shopping_lists l where l.id=shopping_list_id and public.is_family_member(l.family_id)));
 
+-- The project disables automatic Data API exposure. Only signed-in users
+-- receive the table privileges required by the mobile app; RLS still decides
+-- which rows each user can access.
+grant usage on schema public to authenticated;
+grant select on table public.families,public.family_members,public.meals to authenticated;
+grant select,insert on table public.recommendations to authenticated;
+grant select,insert,update,delete on table
+  public.recommendation_history,
+  public.daily_plans,
+  public.daily_plan_meals,
+  public.shopping_lists,
+  public.shopping_items
+to authenticated;
+
 create or replace function public.upsert_family_profile(
   profile_name text,
   profile_location text,
