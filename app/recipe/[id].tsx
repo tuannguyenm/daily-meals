@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {Image,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Button,IconButton} from '../../src/components';
+import {persistShoppingSnapshot} from '../../src/cloud-sync';
 import {ingredients,meals,recipeSteps} from '../../src/data';
 import {useAppStore} from '../../src/store';
 import {colors} from '../../src/theme';
@@ -12,7 +13,8 @@ type Tab='ingredients'|'steps'|'nutrition'|'replace';
 
 export default function Recipe(){
  const {id}=useLocalSearchParams<{id:string}>(),{width}=useWindowDimensions(),tablet=width>=768;
- const add=useAppStore(state=>state.addMissing),meal=meals.find(item=>item.id===id)??meals[0],[tab,setTab]=useState<Tab>('ingredients');
+ const add=useAppStore(state=>state.addMissing),familyId=useAppStore(state=>state.family?.id),meal=meals.find(item=>item.id===id)??meals[0],[tab,setTab]=useState<Tab>('ingredients');
+ const addToShopping=()=>{add(ingredients);void persistShoppingSnapshot(familyId).catch(()=>undefined);router.push('/tabs/shopping')};
  return <SafeAreaView style={x.safe}>
   <View style={x.header}>
    <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" style={x.back} onPress={()=>router.back()}><Ionicons name="arrow-back" size={23}/></Pressable>
@@ -30,7 +32,7 @@ export default function Recipe(){
     {tablet&&<View style={x.right}><Image source={meal.image} style={x.tabletHero}/><View style={x.tip}><Text style={x.tipTitle}>Mẹo nhỏ</Text><Text style={x.muted}>Xào lửa lớn để giữ độ giòn của rau củ và thịt gà mềm ngon.</Text></View><Steps compact/></View>}
    </View>
   </ScrollView>
-  <View style={x.footer}><Button title="🛒  Thêm vào danh sách mua" outline onPress={()=>{add(ingredients);router.push('/tabs/shopping')}}/><Button title="Bắt đầu nấu" onPress={()=>router.push(`/cooking/${meal.id}`)}/></View>
+  <View style={x.footer}><Button title="🛒  Thêm vào danh sách mua" outline onPress={addToShopping}/><Button title="Bắt đầu nấu" onPress={()=>router.push(`/cooking/${meal.id}`)}/></View>
  </SafeAreaView>;
 }
 

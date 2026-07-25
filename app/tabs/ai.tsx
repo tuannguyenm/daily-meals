@@ -3,6 +3,7 @@ import {router,useLocalSearchParams} from 'expo-router';
 import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Image,Pressable,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {Button,Chip,Page,Screen} from '../../src/components';
+import {persistMealSelection} from '../../src/cloud-sync';
 import {detectMealType,getMealRecommendations} from '../../src/service';
 import {useAppStore} from '../../src/store';
 import {Meal,MealPriority,MealType} from '../../src/types';
@@ -27,7 +28,7 @@ export default function AIRecommendation(){
  useEffect(()=>{const timer=setTimeout(()=>void loadRecommendations(),350);return()=>{clearTimeout(timer);requestId.current+=1}},[loadRecommendations]);
  const result=recommendations[activeMealType],today=useMemo(()=>new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'numeric',month:'long'}).format(new Date()),[]);
  const hour=new Date().getHours(),greeting=hour<11?'Chào buổi sáng':hour<14?'Chào buổi trưa':'Chào buổi tối';
- const choose=(meal:Meal,alternative=false)=>{selectMeal(activeMealType,meal);if(alternative)setRecommendation(activeMealType,{meal,alternatives:(result?[result.meal,...result.alternatives]:[]).filter(item=>item.id!==meal.id).slice(0,2),reasons:['Lựa chọn thay thế phù hợp với ưu tiên của gia đình','Thời gian và chi phí cân đối','Dễ chuẩn bị cho bữa ăn này'],priorities:selectedPriorities,generatedAt:new Date().toISOString()})};
+ const choose=(meal:Meal,alternative=false)=>{selectMeal(activeMealType,meal);void persistMealSelection(familyId,activeMealType,{...meal,status:'confirmed'}).catch(()=>undefined);if(alternative)setRecommendation(activeMealType,{meal,alternatives:(result?[result.meal,...result.alternatives]:[]).filter(item=>item.id!==meal.id).slice(0,2),reasons:['Lựa chọn thay thế phù hợp với ưu tiên của gia đình','Thời gian và chi phí cân đối','Dễ chuẩn bị cho bữa ăn này'],priorities:selectedPriorities,generatedAt:new Date().toISOString()})};
  return <Screen><Page><View style={x.header}><View><Text style={x.greeting}>{greeting} 👋</Text><Text style={x.family}>{family?.name??'Gia đình Minh'}</Text><Text style={x.date}>{today}</Text></View><View style={x.sparkle}><Ionicons name="sparkles" size={22} color={colors.primaryDark}/></View></View>
   <View><Text style={x.title}>AI gợi ý cho {periodCopy[activeMealType]}</Text><Text style={x.subtitle}>Một lựa chọn phù hợp để cả nhà quyết định nhanh hơn.</Text></View>
   <View accessibilityRole="tablist" style={x.periods}>{periods.map(item=><Pressable key={item.value} accessibilityRole="tab" accessibilityState={{selected:item.value===activeMealType}} onPress={()=>setActiveMealType(item.value)} style={[x.period,item.value===activeMealType&&x.periodActive]}><Text style={[x.periodText,item.value===activeMealType&&x.periodTextActive]}>{item.label}</Text></Pressable>)}</View>

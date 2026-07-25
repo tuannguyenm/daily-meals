@@ -5,6 +5,7 @@ import {useState} from 'react';
 import {Image,Pressable,StyleSheet,Text,View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Button} from '../../src/components';
+import {persistMealSelection} from '../../src/cloud-sync';
 import {meals,recipeSteps} from '../../src/data';
 import {useAppStore} from '../../src/store';
 import {colors} from '../../src/theme';
@@ -12,8 +13,8 @@ import {Meal} from '../../src/types';
 
 export default function CookingMode(){
  const {id}=useLocalSearchParams<{id:string}>(),meal=meals.find(item=>item.id===id)??meals[0];
- const completeMeal=useAppStore(state=>state.completeMeal),[finished,setFinished]=useState(false);
- const finish=()=>{completeMeal(meal.id);setFinished(true)};
+ const completeMeal=useAppStore(state=>state.completeMeal),selectMeal=useAppStore(state=>state.selectMeal),selected=useAppStore(state=>state.selectedMeals),familyId=useAppStore(state=>state.family?.id),[finished,setFinished]=useState(false);
+ const finish=()=>{if(selected[meal.type]?.id!==meal.id)selectMeal(meal.type,meal);completeMeal(meal.id);void persistMealSelection(familyId,meal.type,{...meal,status:'completed'}).catch(()=>undefined);setFinished(true)};
  return <SafeAreaView style={x.safe}>{finished?<Completion mealTitle={meal.title}/>:<CookingSession meal={meal} onFinish={finish}/>}</SafeAreaView>;
 }
 

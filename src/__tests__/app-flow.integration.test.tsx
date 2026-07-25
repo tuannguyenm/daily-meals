@@ -6,6 +6,7 @@ import Shopping from '../../app/tabs/shopping';
 import CreateFamily from '../../app/onboarding/create-family';
 import Welcome from '../../app/onboarding/welcome';
 import Recipe from '../../app/recipe/[id]';
+import {persistMealSelection,persistShoppingSnapshot} from '../cloud-sync';
 import {initialShopping} from '../data';
 import {simulateNextRecommendationError} from '../service';
 import {useAppStore} from '../store';
@@ -23,13 +24,14 @@ jest.mock('react-native-safe-area-context',()=>{
  return{SafeAreaView:View,SafeAreaProvider:View,useSafeAreaInsets:()=>({top:0,right:0,bottom:0,left:0})};
 });
 jest.mock('@expo/vector-icons',()=>({Ionicons:'Ionicons'}));
+jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve())}));
 
 const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jest.Mock};
 
 function resetStore(){
  useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
-  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:[],completedMealIds:[],
+  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:[],completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
  });
 }
 
@@ -59,6 +61,7 @@ describe('Daily Meals integration flow',()=>{
   expect(recommended).toBeDefined();
   fireEvent.press(ai.getByLabelText('Chọn món này'));
   expect(useAppStore.getState().selectedMeals.dinner?.id).toBe(recommended?.id);
+  expect(persistMealSelection).toHaveBeenCalledWith(expect.anything(),'dinner',expect.objectContaining({id:recommended?.id,status:'confirmed'}));
   fireEvent.press(ai.getByLabelText('Xem công thức'));
   expect(mockRouter.push).toHaveBeenCalledWith(`/recipe/${recommended?.id}`);
   ai.unmount();
@@ -67,12 +70,14 @@ describe('Daily Meals integration flow',()=>{
   const recipe=render(<Recipe/>);
   fireEvent.press(recipe.getByLabelText(/Thêm vào danh sách mua/));
   expect(useAppStore.getState().shopping.length).toBeGreaterThan(0);
+  expect(persistShoppingSnapshot).toHaveBeenCalled();
   expect(mockRouter.push).toHaveBeenCalledWith('/tabs/shopping');
   recipe.unmount();
 
   const shopping=render(<Shopping/>),firstItem=useAppStore.getState().shopping[0];
   fireEvent.press(shopping.getByLabelText(`${firstItem.name}, ${firstItem.quantity}`));
   expect(useAppStore.getState().shopping[0].checked).toBe(true);
+  expect(persistShoppingSnapshot).toHaveBeenCalledTimes(2);
  },15000);
 
  it('shows progressive loading and recovers from a simulated error',async()=>{

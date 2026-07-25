@@ -27,3 +27,10 @@ npx supabase start
 npx supabase db reset
 npx supabase functions serve recommendations
 ```
+
+## Synced app flows
+
+- Selecting or completing a meal updates the matching slot in today's plan.
+- Recipe ingredients and Shopping changes are written atomically to the active shopping list.
+- Shopping item positions are stored so checking an item does not reorder the list.
+- The app updates optimistically, keeps its local cache offline, and offers a retry action when Supabase is unavailable.

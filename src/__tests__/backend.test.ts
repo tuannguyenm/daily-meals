@@ -1,4 +1,4 @@
-import {loadFamilyProfile,syncFamilyProfile} from '../backend';
+import {loadDailyPlan,loadFamilyProfile,loadShoppingItems,syncDailyPlanMeal,syncFamilyProfile,syncShoppingItems} from '../backend';
 import {supabase} from '../supabase';
 import {FamilyProfile} from '../types';
 
@@ -49,5 +49,32 @@ describe('Supabase family repository',()=>{
  it('surfaces Supabase errors',async()=>{
   mockMaybeSingle.mockResolvedValue({data:null,error:new Error('RLS denied')});
   await expect(loadFamilyProfile()).rejects.toThrow('RLS denied');
+ });
+
+ it('loads and hydrates today plan meals',async()=>{
+  const query:{select:jest.Mock;eq:jest.Mock;maybeSingle:jest.Mock}={select:jest.fn(),eq:jest.fn(),maybeSingle:jest.fn()};
+  query.select.mockReturnValue(query);query.eq.mockReturnValue(query);
+  query.maybeSingle.mockResolvedValue({data:{id:'plan',daily_plan_meals:[{meal_type:'dinner',meal_id:'ga',status:'completed'}]},error:null});
+  mockFrom.mockReturnValue(query);
+  const result=await loadDailyPlan(row.id,'2026-07-25');
+  expect(result.exists).toBe(true);
+  expect(result.meals.dinner).toMatchObject({id:'ga',status:'completed'});
+ });
+
+ it('upserts a selected meal through the atomic RPC',async()=>{
+  mockRpc.mockResolvedValue({data:{},error:null});
+  await syncDailyPlanMeal(row.id,'dinner',{id:'ga',type:'dinner',title:'Gà',sideDishes:[],image:1,cookingTimeMinutes:20,estimatedCost:100000,servings:4,missingIngredients:[],status:'confirmed'},'2026-07-25');
+  expect(mockRpc).toHaveBeenCalledWith('upsert_daily_plan_meal',expect.objectContaining({target_family_id:row.id,target_plan_date:'2026-07-25',target_meal_type:'dinner',target_meal_id:'ga',target_status:'confirmed'}));
+ });
+
+ it('loads and replaces the active shopping list',async()=>{
+  const query:{select:jest.Mock;eq:jest.Mock;maybeSingle:jest.Mock}={select:jest.fn(),eq:jest.fn(),maybeSingle:jest.fn()};
+  query.select.mockReturnValue(query);query.eq.mockReturnValue(query);
+  query.maybeSingle.mockResolvedValue({data:{id:'list',shopping_items:[{id:'item-id',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:false}]},error:null});
+  mockFrom.mockReturnValue(query);
+  await expect(loadShoppingItems(row.id)).resolves.toMatchObject({exists:true,items:[{id:'item-id',name:'Cà rốt'}]});
+  mockRpc.mockResolvedValue({data:[{id:'remote-id',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}],error:null});
+  await expect(syncShoppingItems(row.id,[{id:'local',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}])).resolves.toMatchObject([{id:'remote-id',checked:true}]);
+  expect(mockRpc).toHaveBeenCalledWith('replace_active_shopping_items',expect.objectContaining({target_family_id:row.id,target_items:[{name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}]}));
  });
 });
