@@ -6,7 +6,9 @@ let pendingMutations=0;
 let shoppingQueue:Promise<void>=Promise.resolve();
 
 function messageOf(error:unknown){
- return error instanceof Error?error.message:'Không thể kết nối Supabase.';
+ if(error instanceof Error)return error.message;
+ if(error&&typeof error==='object'&&'message'in error&&typeof error.message==='string')return error.message;
+ return'Không thể kết nối Supabase.';
 }
 
 async function tracked(task:()=>Promise<void>){

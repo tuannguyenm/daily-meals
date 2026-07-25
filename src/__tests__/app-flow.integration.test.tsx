@@ -78,6 +78,11 @@ describe('Daily Meals integration flow',()=>{
   fireEvent.press(shopping.getByLabelText(`${firstItem.name}, ${firstItem.quantity}`));
   expect(useAppStore.getState().shopping[0].checked).toBe(true);
   expect(persistShoppingSnapshot).toHaveBeenCalledTimes(2);
+  const countBeforeDelete=useAppStore.getState().shopping.length;
+  fireEvent.press(shopping.getByLabelText('Chỉnh sửa danh sách'));
+  fireEvent.press(shopping.getByLabelText(`Xóa ${firstItem.name}`));
+  expect(useAppStore.getState().shopping).toHaveLength(countBeforeDelete-1);
+  expect(persistShoppingSnapshot).toHaveBeenCalledTimes(3);
  },15000);
 
  it('shows progressive loading and recovers from a simulated error',async()=>{

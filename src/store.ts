@@ -27,6 +27,7 @@ export interface AppState{
  toggle:(id:string)=>void;
  addMissing:(value:RecipeIngredient[])=>void;
  addItem:(value:ShoppingItem)=>void;
+ removeItem:(id:string)=>void;
  replaceSelectedMeals:(value:Partial<Record<MealType,Meal>>)=>void;
  setShopping:(value:ShoppingItem[])=>void;
  setCloudStatus:(status:AppState['cloudStatus'],error?:string)=>void;
@@ -63,6 +64,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
   ],
  })),
  addItem:value=>set(state=>({shopping:[...state.shopping,value]})),
+ removeItem:id=>set(state=>({shopping:state.shopping.filter(item=>item.id!==id)})),
  replaceSelectedMeals:selectedMeals=>set({selectedMeals}),
  setShopping:shopping=>set({shopping}),
  setCloudStatus:(cloudStatus,cloudError)=>set({cloudStatus,cloudError}),
