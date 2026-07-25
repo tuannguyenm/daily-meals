@@ -1,5 +1,13 @@
 create extension if not exists pgcrypto;
 
+-- This project may have been created with "Automatically expose new tables"
+-- enabled. Revoke those defaults before creating application objects; each
+-- required privilege is granted explicitly later in this migration.
+alter default privileges for role postgres in schema public
+  revoke select,insert,update,delete on tables from anon,authenticated,service_role;
+alter default privileges for role postgres in schema public
+  revoke usage,select on sequences from anon,authenticated,service_role;
+
 create table public.families (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(name) between 1 and 120),
