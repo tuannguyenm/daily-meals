@@ -1,0 +1,19 @@
+appId: com.dailymeals.family
+name: Recipe cooking mode
+tags:
+  - smoke
+  - android
+---
+- launchApp
+- openLink: "dailymeals://recipe/pho"
+- extendedWaitUntil:
+    visible: "Phở bò"
+    timeout: 15000
+- tapOn: "Bắt đầu nấu"
+- assertVisible: "Bước 1.*"
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Bước tiếp theo"
+- tapOn: "Hoàn thành món ăn"
+- assertVisible: "Hoàn thành món ăn!"

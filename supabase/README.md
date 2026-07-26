@@ -13,10 +13,34 @@
 npx supabase login
 npx supabase link --project-ref YOUR_PROJECT_REF
 npx supabase db push
-npx supabase functions deploy recommendations
+npx supabase functions deploy recommendations --no-verify-jwt
 ```
 
 The migration creates all application tables, seed meals, helper functions, and Row Level Security policies. The mobile app never needs a secret/service-role key.
+
+## OpenAI recommendations
+
+The `recommendations` Edge Function calls the OpenAI Responses API with strict
+structured output. It only accepts meal IDs already present in the Supabase
+catalog. Invalid output, timeouts, API errors, or a missing key automatically
+fall back to deterministic rules, so the meal flow remains available.
+
+Set the server-only secret from your own terminal (never add it to `.env` or
+the Expo bundle):
+
+```bash
+npx supabase secrets set OPENAI_API_KEY=YOUR_KEY OPENAI_MODEL=gpt-5.6-luna
+npx supabase functions deploy recommendations --no-verify-jwt
+```
+
+`gpt-5.6-luna` is the cost-sensitive default for this high-volume,
+well-defined selection task. Override `OPENAI_MODEL` without changing code if
+another compatible model is preferred.
+
+The function is deployed with the gateway JWT check disabled because Supabase
+publishable-key sessions are validated inside the function with
+`auth.getUser()`. It still rejects missing/invalid sessions and verifies family
+membership before reading or writing family data.
 
 ## Local Supabase
 

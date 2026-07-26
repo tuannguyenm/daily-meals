@@ -1,0 +1,29 @@
+appId: com.dailymeals.family
+name: Onboarding to AI recipe and shopping
+tags:
+  - smoke
+  - android
+---
+- launchApp:
+    clearState: true
+- openLink: "dailymeals://expo-development-client/?url=http%3A%2F%2F10.0.2.2%3A8081"
+- extendedWaitUntil:
+    visible: "Daily Meals"
+    timeout: 120000
+- tapOn: "Bắt đầu"
+- assertVisible: "Tạo gia đình"
+- tapOn:
+    text: "Tiếp tục.*"
+- extendedWaitUntil:
+    visible: "AI đề xuất phù hợp nhất"
+    timeout: 20000
+- assertVisible: "Chọn món này"
+- tapOn: "Chọn món này"
+- tapOn: "Xem công thức"
+- extendedWaitUntil:
+    visible: "Nguyên liệu.*"
+    timeout: 15000
+- tapOn:
+    text: ".*Thêm [0-9]+ nguyên liệu cần mua.*"
+- assertVisible: "Danh sách mua sắm"
+- assertVisible: "Đánh dấu đã mua.*"

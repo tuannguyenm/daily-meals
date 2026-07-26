@@ -24,11 +24,11 @@ function score(meal:Meal,priorities:MealPriority[]){
  return value;
 }
 
-interface RemoteMeal{id:string;type:MealType;title:string;sideDishes:string[];cookingTimeMinutes:number;estimatedCost:number;servings:number;missingIngredients:string[]}
-interface RemoteRecommendation{meal:RemoteMeal;alternatives:RemoteMeal[];reasons:string[];priorities:MealPriority[];generatedAt:string}
-function hydrateMeal(remote:RemoteMeal):Meal{const local=meals.find(meal=>meal.id===remote.id)??meals[0];return{...local,...remote,image:local.image,status:local.status}}
-export async function getMealRecommendations(mealType:MealType,priorities:MealPriority[]=[],excludedMealId?:string,familyId?:string):Promise<MealRecommendationResult>{
- if(familyId&&/^[0-9a-f-]{36}$/i.test(familyId)&&supabase){try{const {data,error}=await supabase.functions.invoke<RemoteRecommendation>('recommendations',{body:{familyId,mealType,priorities,excludeMealIds:excludedMealId?[excludedMealId]:[]}});if(error)throw error;if(!data)throw new Error('EMPTY_RECOMMENDATION');return{meal:hydrateMeal(data.meal),alternatives:data.alternatives.map(hydrateMeal),reasons:data.reasons,priorities:data.priorities,generatedAt:data.generatedAt}}catch{/* Offline/local fallback below. */}}
+interface RemoteMeal{id:string;title:string;type:MealType;cooking_time_minutes:number;estimated_cost:number}
+interface RemoteRecommendation{primary:RemoteMeal;alternatives:RemoteMeal[];reasons:string[];source:'openai'|'rules'}
+function hydrateMeal(remote:RemoteMeal):Meal{const local=meals.find(meal=>meal.id===remote.id)??meals[0];return{...local,id:remote.id,type:remote.type,title:remote.title,cookingTimeMinutes:remote.cooking_time_minutes,estimatedCost:remote.estimated_cost,image:local.image,status:local.status}}
+export async function getMealRecommendations(mealType:MealType,priorities:MealPriority[]=[],excludedMealId?:string,familyId?:string,feedback?:string):Promise<MealRecommendationResult>{
+ if(familyId&&/^[0-9a-f-]{36}$/i.test(familyId)&&supabase){try{const {data,error}=await supabase.functions.invoke<RemoteRecommendation>('recommendations',{body:{familyId,mealType,priorities,excludeMealIds:excludedMealId?[excludedMealId]:[],feedback}});if(error)throw error;if(!data)throw new Error('EMPTY_RECOMMENDATION');return{meal:hydrateMeal(data.primary),alternatives:data.alternatives.map(hydrateMeal),reasons:data.reasons,priorities:[...priorities],generatedAt:new Date().toISOString(),source:data.source}}catch{/* Offline/local fallback below. */}}
  await new Promise(resolve=>setTimeout(resolve,1500));
  if(failNextRecommendation){failNextRecommendation=false;throw new Error('SIMULATED_RECOMMENDATION_ERROR')}
  const candidates=meals.filter(meal=>meal.type===mealType&&meal.id!==excludedMealId).sort((a,b)=>score(b,priorities)-score(a,priorities));
@@ -40,5 +40,5 @@ export async function getMealRecommendations(mealType:MealType,priorities:MealPr
   priorities.includes('budget')?'Chi phí phù hợp ngân sách hôm nay':`Đủ ${meal.servings} phần cho cả gia đình`,
   meal.missingIngredients.length===0?'Có đủ nguyên liệu đang cần':'Chỉ cần mua thêm ít nguyên liệu',
  ].slice(0,3);
- return{meal,alternatives:ranked.slice(1,3),reasons,priorities:[...priorities],generatedAt:new Date().toISOString()};
+ return{meal,alternatives:ranked.slice(1,3),reasons,priorities:[...priorities],generatedAt:new Date().toISOString(),source:'local'};
 }
