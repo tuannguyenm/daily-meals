@@ -29,13 +29,13 @@ Set the server-only secret from your own terminal (never add it to `.env` or
 the Expo bundle):
 
 ```bash
-npx supabase secrets set OPENAI_API_KEY=YOUR_KEY OPENAI_MODEL=gpt-5.6-luna
+npx supabase secrets set OPENAI_API_KEY=YOUR_KEY OPENAI_MODEL=gpt-5.4-mini
 npx supabase functions deploy recommendations --no-verify-jwt
 ```
 
-`gpt-5.6-luna` is the cost-sensitive default for this high-volume,
-well-defined selection task. Override `OPENAI_MODEL` without changing code if
-another compatible model is preferred.
+`gpt-5.4-mini` is the default for this high-volume, well-defined selection
+task. Override `OPENAI_MODEL` without changing code if another compatible
+model is preferred.
 
 The function is deployed with the gateway JWT check disabled because Supabase
 publishable-key sessions are validated inside the function with

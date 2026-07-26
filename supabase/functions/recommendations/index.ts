@@ -196,14 +196,13 @@ async function selectWithOpenAi(args: {
         type: 'array',
         minItems: 3,
         maxItems: 3,
-        uniqueItems: true,
         items: { type: 'string', enum: allowedIds },
       },
       reasons: {
         type: 'array',
         minItems: 3,
         maxItems: 3,
-        items: { type: 'string', minLength: 1, maxLength: 180 },
+        items: { type: 'string' },
       },
     },
     required: ['orderedMealIds', 'reasons'],
@@ -407,7 +406,7 @@ Deno.serve(async (request) => {
 
   const ranked = rankMeals(meals as MealRow[], priorities)
   const apiKey = Deno.env.get('OPENAI_API_KEY')
-  const model = Deno.env.get('OPENAI_MODEL') ?? 'gpt-5.6-luna'
+  const model = Deno.env.get('OPENAI_MODEL') ?? 'gpt-5.4-mini'
   let selected = ranked.slice(0, 3).map(({ meal }) => meal)
   let reasons = buildRuleReasons(selected[0], priorities)
   let source: 'openai' | 'rules' = 'rules'
