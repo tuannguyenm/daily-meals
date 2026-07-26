@@ -26,14 +26,14 @@ jest.mock('react-native-safe-area-context',()=>{
 });
 jest.mock('@expo/vector-icons',()=>({Ionicons:'Ionicons'}));
 jest.mock('expo-keep-awake',()=>({useKeepAwake:jest.fn()}));
-jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve())}));
+jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),hydratePlanWeek:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistMealRemoval:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve())}));
 
 const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jest.Mock};
 
 function resetStore(){
  useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
-  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:[],ingredientAvailability:{},completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
+  recommendations:{},selectedMeals:{},weeklyPlans:{},activePlanDate:'2026-07-26',recommendationHistory:[],shopping:[],ingredientAvailability:{},completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
  });
 }
 
@@ -63,7 +63,7 @@ describe('Daily Meals integration flow',()=>{
   expect(recommended).toBeDefined();
   fireEvent.press(ai.getByLabelText('Chọn món này'));
   expect(useAppStore.getState().selectedMeals.dinner?.id).toBe(recommended?.id);
-  expect(persistMealSelection).toHaveBeenCalledWith(expect.anything(),'dinner',expect.objectContaining({id:recommended?.id,status:'confirmed'}));
+  expect(persistMealSelection).toHaveBeenCalledWith(expect.anything(),'dinner',expect.objectContaining({id:recommended?.id,status:'confirmed'}),'2026-07-26');
   fireEvent.press(ai.getByLabelText('Xem công thức'));
   expect(mockRouter.push).toHaveBeenCalledWith(`/recipe/${recommended?.id}`);
   ai.unmount();

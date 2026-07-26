@@ -216,17 +216,18 @@ for(const seed of extraMealSeeds){
  );
 }
 
-export function getLocalRecipe(mealId:string):RecipeData{return localRecipes[mealId]??localRecipes.ga}
+export function getLocalRecipeIfAvailable(mealId:string):RecipeData|undefined{return localRecipes[mealId]}
+export function getLocalRecipe(mealId:string):RecipeData{return getLocalRecipeIfAvailable(mealId)??localRecipes.ga}
 export const ingredients=getLocalRecipe('ga').ingredients;
 export const recipeSteps=getLocalRecipe('ga').steps;
 export const mealThumbs={pho:require('../assets/images/meals/pho.webp'),rice:require('../assets/images/meals/com-ga.webp')};
 export const initialShopping:ShoppingItem[]=[
- {id:'1',name:'Rau cải',quantity:'1 bó',category:'Rau củ',checked:false},
- {id:'2',name:'Hành lá',quantity:'1 bó',category:'Rau củ',checked:false},
- {id:'3',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:false},
- {id:'4',name:'Thịt gà',quantity:'300g',category:'Thịt & Hải sản',checked:false},
- {id:'5',name:'Cá',quantity:'500g',category:'Thịt & Hải sản',checked:false},
- {id:'6',name:'Nước mắm',quantity:'1 chai',category:'Gia vị & Khác',checked:false},
- {id:'7',name:'Dầu ăn',quantity:'1 chai',category:'Gia vị & Khác',checked:false},
- {id:'8',name:'Tiêu xay',quantity:'1 hũ',category:'Gia vị & Khác',checked:false},
+ {id:'1',name:'Rau cải',quantity:'1 bó',category:'Rau củ',checked:false,source:'recipe'},
+ {id:'2',name:'Hành lá',quantity:'1 bó',category:'Rau củ',checked:false,source:'recipe'},
+ {id:'3',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:false,source:'recipe'},
+ {id:'4',name:'Thịt gà',quantity:'300g',category:'Thịt & Hải sản',checked:false,source:'recipe'},
+ {id:'5',name:'Cá',quantity:'500g',category:'Thịt & Hải sản',checked:false,source:'recipe'},
+ {id:'6',name:'Nước mắm',quantity:'1 chai',category:'Gia vị & Khác',checked:false,source:'recipe'},
+ {id:'7',name:'Dầu ăn',quantity:'1 chai',category:'Gia vị & Khác',checked:false,source:'recipe'},
+ {id:'8',name:'Tiêu xay',quantity:'1 hũ',category:'Gia vị & Khác',checked:false,source:'recipe'},
 ];

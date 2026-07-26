@@ -1,18 +1,20 @@
-import {loadDailyPlan,loadShoppingItems,syncDailyPlanMeal,syncShoppingItems} from '../backend';
+import {loadShoppingItems,loadWeeklyPlans,syncDailyPlanMeal,syncShoppingItems} from '../backend';
 import {hydrateCloudData,persistMealSelection,persistShoppingSnapshot} from '../cloud-sync';
 import {meals} from '../data';
+import {localDateKey} from '../date-utils';
 import {useAppStore} from '../store';
 
 jest.mock('../backend',()=>({
  isCloudFamilyId:(value?:string)=>Boolean(value),
- loadDailyPlan:jest.fn(),
+ loadWeeklyPlans:jest.fn(),
  loadShoppingItems:jest.fn(),
+ removeDailyPlanMeal:jest.fn(),
  syncDailyPlanMeal:jest.fn(),
  syncShoppingItems:jest.fn(),
 }));
 
 const familyId='d6c76525-cfba-4cf6-a638-11cb2c3c6532';
-const mockLoadPlan=loadDailyPlan as jest.Mock;
+const mockLoadPlan=loadWeeklyPlans as jest.Mock;
 const mockLoadShopping=loadShoppingItems as jest.Mock;
 const mockSyncPlan=syncDailyPlanMeal as jest.Mock;
 const mockSyncShopping=syncShoppingItems as jest.Mock;
@@ -20,13 +22,13 @@ const mockSyncShopping=syncShoppingItems as jest.Mock;
 describe('cloud data coordinator',()=>{
  beforeEach(()=>{
   jest.clearAllMocks();
-  useAppStore.setState({selectedMeals:{},shopping:[],cloudStatus:'idle',cloudError:undefined});
+  useAppStore.setState({selectedMeals:{},weeklyPlans:{},activePlanDate:localDateKey(),shopping:[],cloudStatus:'idle',cloudError:undefined});
  });
 
  it('hydrates plan and shopping from Supabase',async()=>{
   const dinner={...meals.find(meal=>meal.id==='ga')!,status:'completed' as const};
   const remoteItem={id:'remote-item',name:'Nấm',quantity:'100g',category:'Rau củ',checked:false};
-  mockLoadPlan.mockResolvedValue({exists:true,meals:{dinner}});
+  mockLoadPlan.mockResolvedValue({[localDateKey()]:{dinner}});
   mockLoadShopping.mockResolvedValue({exists:true,items:[remoteItem]});
   await hydrateCloudData(familyId);
   expect(useAppStore.getState().selectedMeals.dinner).toMatchObject({id:'ga',status:'completed'});
@@ -37,13 +39,13 @@ describe('cloud data coordinator',()=>{
  it('uploads local data when the cloud is empty',async()=>{
   const dinner=meals.find(meal=>meal.id==='ga')!;
   const localItem={id:'local',name:'Nấm',quantity:'100g',category:'Rau củ',checked:false};
-  useAppStore.setState({selectedMeals:{dinner},shopping:[localItem]});
-  mockLoadPlan.mockResolvedValue({exists:false,meals:{}});
+  useAppStore.setState({selectedMeals:{dinner},weeklyPlans:{[localDateKey()]:{dinner}},shopping:[localItem]});
+  mockLoadPlan.mockResolvedValue({});
   mockLoadShopping.mockResolvedValue({exists:false,items:[]});
   mockSyncPlan.mockResolvedValue(undefined);
   mockSyncShopping.mockResolvedValue([{...localItem,id:'remote'}]);
   await hydrateCloudData(familyId);
-  expect(mockSyncPlan).toHaveBeenCalledWith(familyId,'dinner',dinner);
+  expect(mockSyncPlan).toHaveBeenCalledWith(familyId,'dinner',dinner,localDateKey());
   expect(useAppStore.getState().shopping[0].id).toBe('remote');
  });
 
@@ -55,7 +57,7 @@ describe('cloud data coordinator',()=>{
   mockSyncShopping.mockResolvedValue([{...localItem,id:'remote'}]);
   await persistMealSelection(familyId,'dinner',dinner);
   await persistShoppingSnapshot(familyId);
-  expect(mockSyncPlan).toHaveBeenCalledWith(familyId,'dinner',dinner);
+  expect(mockSyncPlan).toHaveBeenCalledWith(familyId,'dinner',dinner,localDateKey());
   expect(mockSyncShopping).toHaveBeenCalledWith(familyId,[localItem]);
   expect(useAppStore.getState().shopping[0].id).toBe('remote');
  });

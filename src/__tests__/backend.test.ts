@@ -1,4 +1,4 @@
-import {loadDailyPlan,loadFamilyProfile,loadShoppingItems,syncDailyPlanMeal,syncFamilyProfile,syncShoppingItems} from '../backend';
+import {loadDailyPlan,loadFamilyProfile,loadShoppingItems,loadWeeklyPlans,removeDailyPlanMeal,syncDailyPlanMeal,syncFamilyProfile,syncShoppingItems} from '../backend';
 import {supabase} from '../supabase';
 import {FamilyProfile} from '../types';
 
@@ -64,7 +64,18 @@ describe('Supabase family repository',()=>{
  it('upserts a selected meal through the atomic RPC',async()=>{
   mockRpc.mockResolvedValue({data:{},error:null});
   await syncDailyPlanMeal(row.id,'dinner',{id:'ga',type:'dinner',title:'Gà',sideDishes:[],image:1,cookingTimeMinutes:20,estimatedCost:100000,servings:4,missingIngredients:[],status:'confirmed'},'2026-07-25');
-  expect(mockRpc).toHaveBeenCalledWith('upsert_daily_plan_meal',expect.objectContaining({target_family_id:row.id,target_plan_date:'2026-07-25',target_meal_type:'dinner',target_meal_id:'ga',target_status:'confirmed'}));
+ expect(mockRpc).toHaveBeenCalledWith('upsert_daily_plan_meal',expect.objectContaining({target_family_id:row.id,target_plan_date:'2026-07-25',target_meal_type:'dinner',target_meal_id:'ga',target_status:'confirmed'}));
+ });
+
+ it('loads a date range and removes one meal slot',async()=>{
+  const query:{select:jest.Mock;eq:jest.Mock;gte:jest.Mock;lte:jest.Mock;order:jest.Mock}={select:jest.fn(),eq:jest.fn(),gte:jest.fn(),lte:jest.fn(),order:jest.fn()};
+  query.select.mockReturnValue(query);query.eq.mockReturnValue(query);query.gte.mockReturnValue(query);query.lte.mockReturnValue(query);query.order.mockReturnValue(query);
+  query.order.mockResolvedValueOnce({data:[{id:'plan',plan_date:'2026-07-25',daily_plan_meals:[{meal_type:'dinner',meal_id:'ga',status:'confirmed'}]}],error:null});
+  mockFrom.mockReturnValue(query);
+  await expect(loadWeeklyPlans(row.id,'2026-07-21','2026-07-27')).resolves.toMatchObject({'2026-07-25':{dinner:{id:'ga'}}});
+  mockRpc.mockResolvedValue({data:null,error:null});
+  await removeDailyPlanMeal(row.id,'dinner','2026-07-25');
+  expect(mockRpc).toHaveBeenCalledWith('remove_daily_plan_meal',{target_family_id:row.id,target_plan_date:'2026-07-25',target_meal_type:'dinner'});
  });
 
  it('loads and replaces the active shopping list',async()=>{
@@ -75,6 +86,6 @@ describe('Supabase family repository',()=>{
   await expect(loadShoppingItems(row.id)).resolves.toMatchObject({exists:true,items:[{id:'item-id',name:'Cà rốt'}]});
   mockRpc.mockResolvedValue({data:[{id:'remote-id',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}],error:null});
   await expect(syncShoppingItems(row.id,[{id:'local',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}])).resolves.toMatchObject([{id:'remote-id',checked:true}]);
-  expect(mockRpc).toHaveBeenCalledWith('replace_active_shopping_items',expect.objectContaining({target_family_id:row.id,target_items:[{name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}]}));
+  expect(mockRpc).toHaveBeenCalledWith('replace_active_shopping_items',expect.objectContaining({target_family_id:row.id,target_items:[{name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true,source:'manual',source_key:null}]}));
  });
 });
