@@ -1,5 +1,6 @@
-import {isCloudFamilyId,loadShoppingItems,loadWeeklyPlans,removeDailyPlanMeal,syncDailyPlanMeal,syncShoppingItems} from './backend';
+import {isCloudFamilyId,loadFavoriteMealIds,loadShoppingItems,loadWeeklyPlans,removeDailyPlanMeal,setMealFavorite,syncDailyPlanMeal,syncRecommendationAction,syncShoppingItems} from './backend';
 import {startOfWeek,addDays} from './date-utils';
+import {captureException} from './monitoring';
 import {useAppStore} from './store';
 import {Meal,MealType} from './types';
 
@@ -22,6 +23,7 @@ async function tracked(task:()=>Promise<void>){
  }catch(error){
   pendingMutations-=1;
   useAppStore.getState().setCloudStatus('offline',messageOf(error));
+  captureException(error,{operation:'cloud_sync'});
   throw error;
  }
 }
@@ -31,7 +33,7 @@ export async function hydrateCloudData(familyId:string){
  await tracked(async()=>{
   const local=useAppStore.getState();
   const weekStart=startOfWeek(local.activePlanDate);
-  const [plans,shopping]=await Promise.all([loadWeeklyPlans(familyId,weekStart,addDays(weekStart,6)),loadShoppingItems(familyId)]);
+  const [plans,shopping,favorites]=await Promise.all([loadWeeklyPlans(familyId,weekStart,addDays(weekStart,6)),loadShoppingItems(familyId),loadFavoriteMealIds()]);
 
   if(Object.keys(plans).length)local.mergeWeeklyPlans(plans);
   else{
@@ -41,6 +43,8 @@ export async function hydrateCloudData(familyId:string){
 
   if(shopping.exists)local.setShopping(shopping.items);
   else local.setShopping(await syncShoppingItems(familyId,local.shopping));
+  if(favorites.length)local.replaceFavorites(favorites);
+  else if(local.favoriteMealIds.length)await Promise.all(local.favoriteMealIds.map(mealId=>setMealFavorite(mealId,true)));
  });
 }
 
@@ -60,6 +64,15 @@ export function persistMealSelection(familyId:string|undefined,mealType:MealType
 export function persistMealRemoval(familyId:string|undefined,mealType:MealType,planDate:string){
  if(!isCloudFamilyId(familyId))return Promise.resolve();
  return tracked(()=>removeDailyPlanMeal(familyId!,mealType,planDate));
+}
+
+export function persistRecommendationAction(familyId:string|undefined,mealType:MealType,mealId:string,action:'selected'|'rejected'|'completed',reason?:string){
+ if(!isCloudFamilyId(familyId))return Promise.resolve();
+ return tracked(()=>syncRecommendationAction(familyId!,mealType,mealId,action,reason));
+}
+
+export function persistFavorite(mealId:string,favorite:boolean){
+ return tracked(()=>setMealFavorite(mealId,favorite));
 }
 
 export function persistShoppingSnapshot(familyId:string|undefined){

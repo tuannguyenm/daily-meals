@@ -8,7 +8,10 @@ jest.mock('../backend',()=>({
  isCloudFamilyId:(value?:string)=>Boolean(value),
  loadWeeklyPlans:jest.fn(),
  loadShoppingItems:jest.fn(),
+ loadFavoriteMealIds:jest.fn(()=>Promise.resolve([])),
+ setMealFavorite:jest.fn(()=>Promise.resolve()),
  removeDailyPlanMeal:jest.fn(),
+ syncRecommendationAction:jest.fn(),
  syncDailyPlanMeal:jest.fn(),
  syncShoppingItems:jest.fn(),
 }));

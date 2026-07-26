@@ -6,16 +6,17 @@ jest.mock('../supabase',()=>({supabase:{from:jest.fn()}}));
 
 const mockFrom=supabase!.from as jest.Mock;
 const ingredientRows=[
- {id:'ca-ingredient-1',name:'Cá basa',quantity:'700g',category:'Thịt & Hải sản',available_by_default:true,position:0},
- {id:'ca-ingredient-2',name:'Rau cải',quantity:'1 bó',category:'Rau củ',available_by_default:false,position:1},
+ {id:'ca-ingredient-1',ingredient_id:'catalog-fish',name:'Cá basa',quantity:'700g',category:'Thịt & Hải sản',available_by_default:true,position:0,preparation:'Cắt khúc',optional:false},
+ {id:'ca-ingredient-2',ingredient_id:'catalog-greens',name:'Rau cải',quantity:'1 bó',category:'Rau củ',available_by_default:false,position:1,preparation:null,optional:false},
 ];
 const stepRows=[
  {id:'ca-step-1',position:1,description:'Ướp cá.'},
  {id:'ca-step-2',position:2,description:'Kho cá.'},
 ];
 
-function mockTableResults(ingredients:{data:unknown;error:unknown},steps:{data:unknown;error:unknown}){
+function mockTableResults(ingredients:{data:unknown;error:unknown},steps:{data:unknown;error:unknown},substitutions:{data:unknown;error:unknown}={data:[],error:null}){
  mockFrom.mockImplementation((table:string)=>{
+  if(table==='ingredient_substitutions')return{select:()=>({in:()=>({order:jest.fn().mockResolvedValue(substitutions)})})};
   const result=table==='recipe_ingredients'?ingredients:steps;
   const order=jest.fn().mockResolvedValue(result);
   return{select:()=>({eq:()=>({order})})};
@@ -32,6 +33,13 @@ describe('recipe service',()=>{
   expect(result.recipe).toMatchObject({mealId:'ca',ingredients:[{name:'Cá basa',available:false},{name:'Rau cải',available:false}]});
   expect(result.recipe.steps[0]).toMatchObject({order:1,description:'Ướp cá.'});
   expect(await AsyncStorage.getItem('daily-meals:recipe:v1:ca')).toContain('Cá basa');
+ });
+
+ it('attaches curated substitutions to their source ingredient',async()=>{
+  mockTableResults({data:ingredientRows,error:null},{data:stepRows,error:null},{data:[{id:'sub-1',ingredient_id:'catalog-fish',substitute_name:'Đậu hũ',ratio:'1:1',note:'Áp chảo trước',priority:1}],error:null});
+  const result=await loadRecipe('ca');
+  expect(result.recipe.ingredients[0]).toMatchObject({preparation:'Cắt khúc',substitutions:[{name:'Đậu hũ',ratio:'1:1',note:'Áp chảo trước'}]});
+  expect(result.recipe.ingredients[1].substitutions).toEqual([]);
  });
 
  it('uses a valid cached recipe when Supabase is unavailable',async()=>{

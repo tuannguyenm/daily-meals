@@ -1,6 +1,6 @@
 {
   "name": "daily-meals",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -16,11 +16,15 @@
     "catalog:validate": "node scripts/catalog/validate-catalog.mjs",
     "catalog:import": "node scripts/catalog/import-catalog.mjs",
     "catalog:smoke": "node scripts/catalog/smoke-catalog.mjs",
-    "catalog:prepare-production": "node scripts/catalog/prepare-production.mjs"
+    "catalog:prepare-production": "node scripts/catalog/prepare-production.mjs",
+    "build:android:preview": "eas build --platform android --profile preview",
+    "build:android:production": "eas build --platform android --profile production",
+    "submit:android:internal": "eas submit --platform android --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@sentry/react-native": "~7.11.0",
     "@supabase/supabase-js": "^2.110.8",
     "expo": "~57.0.8",
     "expo-constants": "~57.0.6",
@@ -29,6 +33,7 @@
     "expo-font": "~57.0.1",
     "expo-keep-awake": "~57.0.1",
     "expo-linking": "~57.0.4",
+    "expo-notifications": "~57.0.7",
     "expo-router": "~57.0.8",
     "expo-secure-store": "~57.0.1",
     "expo-splash-screen": "~57.0.5",

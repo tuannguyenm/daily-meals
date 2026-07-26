@@ -4,7 +4,7 @@ import {useAppStore} from '../store';
 describe('app store',()=>{
  beforeEach(()=>useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
-  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:initialShopping,completedMealIds:[],
+  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:initialShopping,completedMealIds:[],favoriteMealIds:[],notificationsEnabled:false,preparationReminderMinutes:30,
   ingredientAvailability:{},
   cloudStatus:'idle',cloudError:undefined,
  }));
@@ -28,6 +28,16 @@ describe('app store',()=>{
   useAppStore.getState().completeMeal(meal.id);
   expect(useAppStore.getState().selectedMeals.dinner?.status).toBe('completed');
   expect(useAppStore.getState().completedMealIds).toEqual([meal.id]);
+  expect(useAppStore.getState().recommendationHistory.filter(item=>item.action==='completed')).toHaveLength(1);
+ });
+
+ it('toggles favorites and notification preferences',()=>{
+  useAppStore.getState().toggleFavorite('pho');
+  expect(useAppStore.getState().favoriteMealIds).toEqual(['pho']);
+  useAppStore.getState().toggleFavorite('pho');
+  expect(useAppStore.getState().favoriteMealIds).toEqual([]);
+  useAppStore.getState().setNotificationPreferences(true,45);
+  expect(useAppStore.getState()).toMatchObject({notificationsEnabled:true,preparationReminderMinutes:45});
  });
 
  it('toggles priorities independently',()=>{

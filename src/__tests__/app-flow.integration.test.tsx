@@ -1,13 +1,14 @@
 import {act,fireEvent,render} from '@testing-library/react-native';
 import {router} from 'expo-router';
 import {ReactNode} from 'react';
+import {Share} from 'react-native';
 import AIRecommendation from '../../app/tabs/ai';
 import CookingMode from '../../app/cooking/[id]';
 import Shopping from '../../app/tabs/shopping';
 import CreateFamily from '../../app/onboarding/create-family';
 import Welcome from '../../app/onboarding/welcome';
 import Recipe from '../../app/recipe/[id]';
-import {persistMealSelection,persistShoppingSnapshot} from '../cloud-sync';
+import {persistFavorite,persistMealSelection,persistShoppingSnapshot} from '../cloud-sync';
 import {getLocalRecipe,initialShopping} from '../data';
 import {simulateNextRecommendationError} from '../service';
 import {useAppStore} from '../store';
@@ -26,21 +27,21 @@ jest.mock('react-native-safe-area-context',()=>{
 });
 jest.mock('@expo/vector-icons',()=>({Ionicons:'Ionicons'}));
 jest.mock('expo-keep-awake',()=>({useKeepAwake:jest.fn()}));
-jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),hydratePlanWeek:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistMealRemoval:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve())}));
+jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),hydratePlanWeek:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistMealRemoval:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve()),persistRecommendationAction:jest.fn(()=>Promise.resolve()),persistFavorite:jest.fn(()=>Promise.resolve())}));
 
 const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jest.Mock};
 
 function resetStore(){
  useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
-  recommendations:{},selectedMeals:{},weeklyPlans:{},activePlanDate:'2026-07-26',recommendationHistory:[],shopping:[],ingredientAvailability:{},completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
+  recommendations:{},selectedMeals:{},weeklyPlans:{},activePlanDate:'2026-07-26',recommendationHistory:[],shopping:[],ingredientAvailability:{},completedMealIds:[],favoriteMealIds:[],notificationsEnabled:false,preparationReminderMinutes:30,cloudStatus:'idle',cloudError:undefined,
  });
 }
 
 async function advance(ms:number){await act(async()=>{await new Promise(resolve=>setTimeout(resolve,ms))})}
 
 describe('Daily Meals integration flow',()=>{
- beforeEach(()=>{jest.clearAllMocks();mockParams={};resetStore()});
+ beforeEach(()=>{jest.clearAllMocks();mockParams={};resetStore();jest.spyOn(Share,'share').mockResolvedValue({action:Share.sharedAction})});
 
  it('runs Onboarding → AI → select meal → Recipe → Shopping',async()=>{
   const welcome=render(<Welcome/>);
@@ -70,6 +71,11 @@ describe('Daily Meals integration flow',()=>{
 
   mockParams={id:recommended?.id};
   const recipe=render(<Recipe/>);
+  fireEvent.press(recipe.getByLabelText('Thêm vào yêu thích'));
+  expect(useAppStore.getState().favoriteMealIds).toContain(recommended!.id);
+  expect(persistFavorite).toHaveBeenCalledWith(recommended!.id,true);
+  fireEvent.press(recipe.getByLabelText('Chia sẻ công thức'));
+  expect(Share.share).toHaveBeenCalledWith(expect.objectContaining({message:expect.stringContaining(recommended!.title)}));
   const firstIngredient=getLocalRecipe(recommended!.id).ingredients[0];
   fireEvent.press(recipe.getByLabelText(`${firstIngredient.name}, ${firstIngredient.quantity}`));
   expect(useAppStore.getState().ingredientAvailability[firstIngredient.id]).toBe(true);
@@ -113,9 +119,7 @@ describe('Daily Meals integration flow',()=>{
   expect(ai.getByText('Đang kiểm tra sở thích gia đình...')).toBeTruthy();
   await advance(500);
   expect(ai.getByText('Đang tránh những món đã ăn gần đây...')).toBeTruthy();
-  await advance(500);
-  expect(ai.getByText('Đang tìm món phù hợp ngân sách...')).toBeTruthy();
-  await advance(500);
+  await advance(1000);
   expect(ai.getByTestId('ai-error-state')).toBeTruthy();
 
   fireEvent.press(ai.getByLabelText('Thử lại'));

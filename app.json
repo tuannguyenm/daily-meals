@@ -2,7 +2,7 @@
   "expo": {
     "name": "Daily Meals",
     "slug": "daily-meals",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "default",
     "scheme": "dailymeals",
     "userInterfaceStyle": "light",
@@ -13,6 +13,7 @@
     },
     "android": {
       "package": "com.dailymeals.family",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-v2.png",
         "backgroundColor": "#FFF6E9"
@@ -32,7 +33,15 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "color": "#4CAF50",
+          "defaultChannel": "meal-reminders"
+        }
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true
@@ -40,6 +49,9 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/adaptive-icon-v2.png"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

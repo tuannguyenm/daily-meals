@@ -1,2 +1,3 @@
+import {addMonitoringBreadcrumb} from './monitoring';
 export type AnalyticsEvent='ai_recommendation_page_opened'|'meal_period_selected'|'priority_selected'|'priority_removed'|'recommendation_loaded'|'recommendation_cache_hit'|'primary_meal_selected'|'alternative_meal_selected'|'meal_change_started'|'meal_change_reason_selected'|'replacement_meal_selected';
-export function trackEvent(_event:AnalyticsEvent,_properties?:Record<string,string|number|boolean>){/* Analytics transport is intentionally deferred for the MVP. */}
+export function trackEvent(event:AnalyticsEvent,properties?:Record<string,string|number|boolean>){addMonitoringBreadcrumb(event,properties)}

@@ -3,7 +3,7 @@ import {router,useLocalSearchParams} from 'expo-router';
 import {useState} from 'react';
 import {ActivityIndicator,Image,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {persistMealSelection} from '../../src/cloud-sync';
+import {persistMealSelection,persistRecommendationAction} from '../../src/cloud-sync';
 import {Button} from '../../src/components';
 import {getMealRecommendations} from '../../src/service';
 import {useAppStore} from '../../src/store';
@@ -20,6 +20,7 @@ export default function Alternatives(){
  const mealType=(params.mealType==='breakfast'||params.mealType==='lunch'||params.mealType==='dinner'?params.mealType:'dinner') as MealType;
  const priorities=useAppStore(state=>state.selectedPriorities),familyId=useAppStore(state=>state.family?.id);
  const activePlanDate=useAppStore(state=>state.activePlanDate),current=useAppStore(state=>state.recommendations[mealType]?.meal);
+ const history=useAppStore(state=>state.recommendationHistory);
  const reject=useAppStore(state=>state.rejectMeal),selectForDate=useAppStore(state=>state.selectMealForDate),setRecommendation=useAppStore(state=>state.setRecommendation);
  const [reason,setReason]=useState<string>(),[loading,setLoading]=useState(false),[replacements,setReplacements]=useState<Meal[]>([]);
  const planDate=params.planDate??activePlanDate;
@@ -27,14 +28,15 @@ export default function Alternatives(){
  const chooseReason=async(value:string)=>{
   setReason(value);setLoading(true);
   try{
-   if(current)reject(mealType,current,value);
-   const result=await getMealRecommendations(mealType,priorities,current?.id,familyId,value);
+   if(current){reject(mealType,current,value);void persistRecommendationAction(familyId,mealType,current.id,'rejected',value).catch(()=>undefined)}
+   const result=await getMealRecommendations(mealType,priorities,current?.id,familyId,value,history);
    setReplacements([result.meal,...result.alternatives].slice(0,3));
   }finally{setLoading(false)}
  };
  const choose=(meal:Meal)=>{
   selectForDate(planDate,mealType,meal);
   void persistMealSelection(familyId,mealType,{...meal,status:'confirmed'},planDate).catch(()=>undefined);
+  void persistRecommendationAction(familyId,mealType,meal.id,'selected').catch(()=>undefined);
   setRecommendation(mealType,{meal,alternatives:replacements.filter(item=>item.id!==meal.id).slice(0,2),reasons:['Phù hợp hơn với lý do đổi món','Cân đối thời gian và chi phí','Dễ chuẩn bị cho gia đình'],priorities,generatedAt:new Date().toISOString()});
   router.replace({pathname:'/tabs/ai',params:{mealType,planDate}});
  };

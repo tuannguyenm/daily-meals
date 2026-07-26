@@ -19,6 +19,9 @@ export interface AppState{
  shopping:ShoppingItem[];
  ingredientAvailability:Record<string,boolean>;
  completedMealIds:string[];
+ favoriteMealIds:string[];
+ notificationsEnabled:boolean;
+ preparationReminderMinutes:number;
  cloudStatus:'idle'|'syncing'|'synced'|'offline';
  cloudError?:string;
  setFamily:(value:FamilyProfile)=>void;
@@ -33,6 +36,9 @@ export interface AppState{
  mergeWeeklyPlans:(value:WeeklyPlans)=>void;
  rejectMeal:(mealType:MealType,meal:Meal,reason:string)=>void;
  completeMeal:(mealId:string)=>void;
+ toggleFavorite:(mealId:string)=>void;
+ replaceFavorites:(mealIds:string[])=>void;
+ setNotificationPreferences:(enabled:boolean,preparationMinutes?:number)=>void;
  toggle:(id:string)=>void;
  toggleIngredientAvailability:(id:string)=>void;
  addMissing:(value:RecipeIngredient[])=>void;
@@ -55,6 +61,9 @@ export const useAppStore=create<AppState>()(persist((set)=>({
  shopping:initialShopping,
  ingredientAvailability:{},
  completedMealIds:[],
+ favoriteMealIds:[],
+ notificationsEnabled:false,
+ preparationReminderMinutes:30,
  cloudStatus:'idle',
  setFamily:family=>set({family,onboardingCompleted:true}),
  setActiveMealType:activeMealType=>set({activeMealType}),
@@ -92,15 +101,19 @@ export const useAppStore=create<AppState>()(persist((set)=>({
  rejectMeal:(mealType,meal,reason)=>set(state=>({recommendationHistory:[...state.recommendationHistory,{mealType,mealId:meal.id,action:'rejected',reason,createdAt:new Date().toISOString()}]})),
  completeMeal:mealId=>set(state=>({
   completedMealIds:state.completedMealIds.includes(mealId)?state.completedMealIds:[...state.completedMealIds,mealId],
+  recommendationHistory:state.completedMealIds.includes(mealId)?state.recommendationHistory:[...state.recommendationHistory,{mealType:(Object.values(state.selectedMeals).find(meal=>meal?.id===mealId)?.type??'dinner'),mealId,action:'completed',createdAt:new Date().toISOString()}],
   selectedMeals:Object.fromEntries(Object.entries(state.selectedMeals).map(([mealType,meal])=>[mealType,meal?.id===mealId?{...meal,status:'completed' as const}:meal])),
   weeklyPlans:{...state.weeklyPlans,[state.activePlanDate]:Object.fromEntries(Object.entries(state.selectedMeals).map(([mealType,meal])=>[mealType,meal?.id===mealId?{...meal,status:'completed' as const}:meal]))},
  })),
+ toggleFavorite:mealId=>set(state=>({favoriteMealIds:state.favoriteMealIds.includes(mealId)?state.favoriteMealIds.filter(id=>id!==mealId):[...state.favoriteMealIds,mealId]})),
+ replaceFavorites:favoriteMealIds=>set({favoriteMealIds}),
+ setNotificationPreferences:(notificationsEnabled,preparationReminderMinutes)=>set(state=>({notificationsEnabled,preparationReminderMinutes:preparationReminderMinutes??state.preparationReminderMinutes})),
  toggle:id=>set(state=>({shopping:state.shopping.map(item=>item.id===id?{...item,checked:!item.checked}:item)})),
  toggleIngredientAvailability:id=>set(state=>({ingredientAvailability:{...state.ingredientAvailability,[id]:!state.ingredientAvailability[id]}})),
  addMissing:value=>set(state=>({
   shopping:[
    ...state.shopping,
-   ...value.filter(item=>!item.available&&!state.shopping.some(existing=>existing.name===item.name)).map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:item.category,checked:false,source:'recipe' as const,sourceKey:item.id})),
+   ...value.filter(item=>!item.available&&!item.optional&&!state.shopping.some(existing=>existing.name===item.name)).map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:item.category,checked:false,source:'recipe' as const,sourceKey:item.id})),
   ],
  })),
  addItem:value=>set(state=>({shopping:[...state.shopping,value]})),
@@ -111,7 +124,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
 }),{
  name:'daily-meals',
  storage:createJSONStorage(()=>AsyncStorage),
- version:6,
+ version:7,
  migrate:persisted=>{
   const old=persisted as Partial<AppState>&{selectedMeal?:Meal};
   const activePlanDate=old.activePlanDate??localDateKey();
@@ -123,6 +136,9 @@ export const useAppStore=create<AppState>()(persist((set)=>({
    activePlanDate,
    weeklyPlans:old.weeklyPlans??(Object.keys(selectedMeals).length?{[activePlanDate]:selectedMeals}:{}),
    completedMealIds:old.completedMealIds??[],
+   favoriteMealIds:old.favoriteMealIds??[],
+   notificationsEnabled:old.notificationsEnabled??false,
+   preparationReminderMinutes:old.preparationReminderMinutes??30,
    ingredientAvailability:old.ingredientAvailability??{},
    cloudStatus:'idle',
   } as AppState;
@@ -140,5 +156,8 @@ export const useAppStore=create<AppState>()(persist((set)=>({
   shopping:state.shopping,
   ingredientAvailability:state.ingredientAvailability,
   completedMealIds:state.completedMealIds,
+  favoriteMealIds:state.favoriteMealIds,
+  notificationsEnabled:state.notificationsEnabled,
+  preparationReminderMinutes:state.preparationReminderMinutes,
  }),
 }));

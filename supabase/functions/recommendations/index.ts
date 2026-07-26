@@ -47,6 +47,7 @@ type HistoryRow = {
   meal_id: string
   action: string
   reason: string | null
+  created_at?: string
 }
 
 type RankedMeal = {
@@ -76,7 +77,7 @@ function normalizePriorities(priorities: unknown): string[] {
     .slice(0, 6)
 }
 
-function scoreMeal(meal: MealRow, priorities: string[]): number {
+function scoreMeal(meal: MealRow, priorities: string[], history: HistoryRow[]): number {
   let score = 50
   const tags = meal.tags.map((tag) => tag.toLowerCase())
 
@@ -93,12 +94,22 @@ function scoreMeal(meal: MealRow, priorities: string[]): number {
     score += tags.some((tag) => ['family', 'kid-friendly', 'mild'].includes(tag)) ? 18 : 0
   }
 
+  const mealHistory = history.filter((item) => item.meal_id === meal.id).slice(0, 8)
+  for (const item of mealHistory) {
+    if (item.action === 'rejected') score -= 35
+    if (item.action === 'selected') score += 8
+    if (item.action === 'completed') score += 14
+  }
+  if (history.slice(0, 4).some((item) => item.meal_id === meal.id && item.action === 'completed')) {
+    score -= 30
+  }
+
   return score
 }
 
-function rankMeals(meals: MealRow[], priorities: string[]): RankedMeal[] {
+function rankMeals(meals: MealRow[], priorities: string[], history: HistoryRow[]): RankedMeal[] {
   return meals
-    .map((meal) => ({ meal, score: scoreMeal(meal, priorities) }))
+    .map((meal) => ({ meal, score: scoreMeal(meal, priorities, history) }))
     .sort((left, right) => right.score - left.score || left.meal.title.localeCompare(right.meal.title))
 }
 
@@ -379,10 +390,10 @@ Deno.serve(async (request) => {
         .single(),
       client
         .from('recommendation_history')
-        .select('meal_id, action, reason')
+        .select('meal_id, action, reason, created_at')
         .eq('family_id', familyId)
         .order('created_at', { ascending: false })
-        .limit(12),
+        .limit(50),
     ])
 
   if (familyError || !family) {
@@ -414,7 +425,7 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Not enough meals are available' }, 404)
   }
 
-  const ranked = rankMeals(meals as MealRow[], priorities)
+  const ranked = rankMeals(meals as MealRow[], priorities, (history ?? []) as HistoryRow[])
   const apiKey = Deno.env.get('OPENAI_API_KEY')
   const model = Deno.env.get('OPENAI_MODEL') ?? 'gpt-5.4-mini'
   let selected = ranked.slice(0, 3).map(({ meal }) => meal)

@@ -1,4 +1,4 @@
-import {loadDailyPlan,loadFamilyProfile,loadShoppingItems,loadWeeklyPlans,removeDailyPlanMeal,syncDailyPlanMeal,syncFamilyProfile,syncShoppingItems} from '../backend';
+import {loadDailyPlan,loadFamilyProfile,loadFavoriteMealIds,loadShoppingItems,loadWeeklyPlans,removeDailyPlanMeal,setMealFavorite,syncDailyPlanMeal,syncFamilyProfile,syncRecommendationAction,syncShoppingItems} from '../backend';
 import {supabase} from '../supabase';
 import {FamilyProfile} from '../types';
 
@@ -87,5 +87,26 @@ describe('Supabase family repository',()=>{
   mockRpc.mockResolvedValue({data:[{id:'remote-id',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}],error:null});
   await expect(syncShoppingItems(row.id,[{id:'local',name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true}])).resolves.toMatchObject([{id:'remote-id',checked:true}]);
   expect(mockRpc).toHaveBeenCalledWith('replace_active_shopping_items',expect.objectContaining({target_family_id:row.id,target_items:[{name:'Cà rốt',quantity:'1 củ',category:'Rau củ',checked:true,source:'manual',source_key:null}]}));
+ });
+
+ it('persists recommendation history and account favorites',async()=>{
+  const insert=jest.fn().mockResolvedValue({error:null});
+  mockFrom.mockReturnValueOnce({insert});
+  await syncRecommendationAction(row.id,'dinner','ga','completed');
+  expect(insert).toHaveBeenCalledWith(expect.objectContaining({family_id:row.id,meal_id:'ga',action:'completed'}));
+
+  const order=jest.fn().mockResolvedValue({data:[{meal_id:'ga'},{meal_id:'pho'}],error:null});
+  mockFrom.mockReturnValueOnce({select:()=>({order})});
+  await expect(loadFavoriteMealIds()).resolves.toEqual(['ga','pho']);
+
+  const upsert=jest.fn().mockResolvedValue({error:null});
+  mockFrom.mockReturnValueOnce({upsert});
+  await setMealFavorite('ga',true);
+  expect(upsert).toHaveBeenCalledWith({meal_id:'ga'},{onConflict:'account_id,meal_id'});
+
+  const eq=jest.fn().mockResolvedValue({error:null}),remove=jest.fn(()=>({eq}));
+  mockFrom.mockReturnValueOnce({delete:remove});
+  await setMealFavorite('ga',false);
+  expect(eq).toHaveBeenCalledWith('meal_id','ga');
  });
 });

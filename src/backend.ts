@@ -66,6 +66,30 @@ export async function syncDailyPlanMeal(familyId:string,mealType:MealType,meal:M
  if(error)throw error;
 }
 
+export async function syncRecommendationAction(familyId:string,mealType:MealType,mealId:string,action:'selected'|'rejected'|'completed',reason?:string):Promise<void>{
+ if(!supabase||!isCloudFamilyId(familyId))return;
+ const {error}=await supabase.from('recommendation_history').insert({family_id:familyId,meal_type:mealType,meal_id:mealId,action,reason:reason?.slice(0,240)??null});
+ if(error)throw error;
+}
+
+export async function loadFavoriteMealIds():Promise<string[]>{
+ if(!supabase)return[];
+ const {data,error}=await supabase.from('meal_favorites').select('meal_id').order('created_at');
+ if(error)throw error;
+ return(data??[]).map(item=>item.meal_id);
+}
+
+export async function setMealFavorite(mealId:string,favorite:boolean):Promise<void>{
+ if(!supabase)return;
+ if(favorite){
+  const {error}=await supabase.from('meal_favorites').upsert({meal_id:mealId},{onConflict:'account_id,meal_id'});
+  if(error)throw error;
+ }else{
+  const {error}=await supabase.from('meal_favorites').delete().eq('meal_id',mealId);
+  if(error)throw error;
+ }
+}
+
 export async function removeDailyPlanMeal(familyId:string,mealType:MealType,planDate:string):Promise<void>{
  if(!supabase||!isCloudFamilyId(familyId))return;
  const {error}=await supabase.rpc('remove_daily_plan_meal',{target_family_id:familyId,target_plan_date:planDate,target_meal_type:mealType});

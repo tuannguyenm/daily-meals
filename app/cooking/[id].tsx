@@ -4,7 +4,7 @@ import {useKeepAwake} from 'expo-keep-awake';
 import {useState} from 'react';
 import {ActivityIndicator,Image,Pressable,StyleSheet,Text,View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {persistMealSelection} from '../../src/cloud-sync';
+import {persistMealSelection,persistRecommendationAction} from '../../src/cloud-sync';
 import {Button} from '../../src/components';
 import {getCachedMeal} from '../../src/catalog';
 import {meals} from '../../src/data';
@@ -17,7 +17,7 @@ import {useMeal} from '../../src/use-catalog';
 export default function CookingMode(){
  const {id}=useLocalSearchParams<{id:string}>(),mealId=id??meals[0].id,meal=useMeal(mealId)??getCachedMeal(mealId)??meals[0],{recipe,source,loading}=useRecipe(mealId);
  const completeMeal=useAppStore(state=>state.completeMeal),selectMeal=useAppStore(state=>state.selectMeal),selected=useAppStore(state=>state.selectedMeals),familyId=useAppStore(state=>state.family?.id),[finished,setFinished]=useState(false);
- const finish=()=>{if(selected[meal.type]?.id!==meal.id)selectMeal(meal.type,meal);completeMeal(meal.id);void persistMealSelection(familyId,meal.type,{...meal,status:'completed'}).catch(()=>undefined);setFinished(true)};
+ const finish=()=>{if(selected[meal.type]?.id!==meal.id)selectMeal(meal.type,meal);completeMeal(meal.id);void Promise.all([persistMealSelection(familyId,meal.type,{...meal,status:'completed'}),persistRecommendationAction(familyId,meal.type,meal.id,'completed')]).catch(()=>undefined);setFinished(true)};
  return <SafeAreaView style={x.safe}>{finished?<Completion mealTitle={meal.title}/>:<CookingSession meal={meal} steps={recipe.steps} loading={loading} offline={source!=='cloud'} onFinish={finish}/>}</SafeAreaView>;
 }
 
