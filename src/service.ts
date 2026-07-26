@@ -1,3 +1,4 @@
+import {CatalogMealRow,hydrateCatalogMeal} from './catalog';
 import {meals} from './data';
 import {Meal,MealPriority,MealRecommendationResult,MealType} from './types';
 import {supabase} from './supabase';
@@ -24,9 +25,9 @@ function score(meal:Meal,priorities:MealPriority[]){
  return value;
 }
 
-interface RemoteMeal{id:string;title:string;type:MealType;cooking_time_minutes:number;estimated_cost:number}
+type RemoteMeal=CatalogMealRow;
 interface RemoteRecommendation{primary:RemoteMeal;alternatives:RemoteMeal[];reasons:string[];source:'openai'|'rules'}
-function hydrateMeal(remote:RemoteMeal):Meal{const local=meals.find(meal=>meal.id===remote.id)??meals[0];return{...local,id:remote.id,type:remote.type,title:remote.title,cookingTimeMinutes:remote.cooking_time_minutes,estimatedCost:remote.estimated_cost,image:local.image,status:local.status}}
+function hydrateMeal(remote:RemoteMeal):Meal{return hydrateCatalogMeal(remote)}
 export async function getMealRecommendations(mealType:MealType,priorities:MealPriority[]=[],excludedMealId?:string,familyId?:string,feedback?:string):Promise<MealRecommendationResult>{
  if(familyId&&/^[0-9a-f-]{36}$/i.test(familyId)&&supabase){try{const {data,error}=await supabase.functions.invoke<RemoteRecommendation>('recommendations',{body:{familyId,mealType,priorities,excludeMealIds:excludedMealId?[excludedMealId]:[],feedback}});if(error)throw error;if(!data)throw new Error('EMPTY_RECOMMENDATION');return{meal:hydrateMeal(data.primary),alternatives:data.alternatives.map(hydrateMeal),reasons:data.reasons,priorities:[...priorities],generatedAt:new Date().toISOString(),source:data.source}}catch{/* Offline/local fallback below. */}}
  await new Promise(resolve=>setTimeout(resolve,1500));

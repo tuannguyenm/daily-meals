@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "meals": [
+    {
+      "id": "ga-xao-sa-ot",
+      "slug": "ga-xao-sa-ot",
+      "type": "dinner",
+      "title": "Gà xào sả ớt",
+      "summary": "Gà mềm thơm sả, vị cay nhẹ, phù hợp bữa cơm gia đình.",
+      "sideDishes": ["Cơm nóng", "Rau luộc"],
+      "cookingTimeMinutes": 30,
+      "estimatedCost": 135000,
+      "servings": 4,
+      "tags": ["family", "quick"],
+      "cuisine": "vietnamese",
+      "difficulty": "easy",
+      "nutrition": {
+        "caloriesKcal": 420,
+        "proteinGrams": 32
+      },
+      "status": "review",
+      "source": {
+        "type": "editorial",
+        "name": "Daily Meals editorial",
+        "license": "internal-use"
+      },
+      "image": {
+        "path": "../assets/images/meals/ga-xao-sa-ot.webp",
+        "alt": "Gà xào sả ớt dùng cùng cơm nóng"
+      },
+      "ingredients": [
+        {
+          "name": "Thịt gà",
+          "quantity": "600g",
+          "quantityValue": 600,
+          "unit": "g",
+          "category": "Thịt & Hải sản",
+          "preparation": "Cắt miếng vừa ăn"
+        },
+        {
+          "name": "Sả",
+          "quantity": "4 cây",
+          "quantityValue": 4,
+          "unit": "cây",
+          "category": "Rau củ",
+          "preparation": "Băm nhỏ"
+        },
+        {
+          "name": "Ớt",
+          "quantity": "1 quả",
+          "quantityValue": 1,
+          "unit": "quả",
+          "category": "Rau củ",
+          "optional": true
+        },
+        {
+          "name": "Nước mắm",
+          "quantity": "2 muỗng canh",
+          "quantityValue": 2,
+          "unit": "muỗng canh",
+          "category": "Gia vị & Khác"
+        }
+      ],
+      "steps": [
+        "Ướp gà với một nửa sả, nước mắm và tiêu trong 15 phút.",
+        "Phi thơm phần sả còn lại với một ít dầu ăn.",
+        "Cho gà vào xào lửa vừa đến khi chín đều và nước sốt sánh lại.",
+        "Nêm lại, thêm ớt nếu dùng rồi tắt bếp."
+      ]
+    }
+  ]
+}

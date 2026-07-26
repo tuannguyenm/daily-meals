@@ -81,3 +81,34 @@ in Google Auth Platform:
 
 The Google client secret belongs only in Google/Supabase configuration. It must
 never be added to the Expo environment or committed to this repository.
+
+## Scalable meal catalog
+
+The app reads published meals from Supabase through `search_meal_catalog`, with
+server-side search, filters and pagination. Images are served by the public
+`meal-images` Storage bucket. The bundled meal data remains an offline fallback.
+
+New content is imported from versioned JSON instead of being hard-coded in the
+mobile app:
+
+```bash
+npm run catalog:validate -- content/catalog.example.json
+npm run catalog:import -- content/catalog.example.json --dry-run
+```
+
+For a real import, set the service-role key only in the current terminal and run
+the command without `--dry-run`:
+
+```bash
+$env:SUPABASE_URL="https://YOUR_PROJECT.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVER_ONLY_KEY"
+npm run catalog:import -- path/to/catalog.json
+```
+
+The service-role key is an administrative secret. Never put it in `.env`, Expo,
+the app bundle, Git, or a client-side CI variable. Use a protected server/CI
+secret when imports are automated.
+
+Imported meals should normally start with `"status": "review"`. Only
+`"published"` meals are returned to the app. Every entry records its source,
+license and content version, and every import creates an auditable batch record.

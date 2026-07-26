@@ -17,14 +17,21 @@ type RequestBody = {
 
 type MealRow = {
   id: string
+  slug: string | null
   type: MealType
   title: string
+  summary: string | null
   side_dishes: string[]
+  image_path: string | null
+  image_url: string | null
   cooking_time_minutes: number
   estimated_cost: number
   servings: number
   missing_ingredients: string[]
   tags: string[]
+  cuisine: string | null
+  difficulty: string | null
+  nutrition: Record<string, unknown>
 }
 
 type FamilyRow = {
@@ -387,9 +394,12 @@ Deno.serve(async (request) => {
 
   let mealQuery = client
     .from('meals')
-    .select('id, type, title, side_dishes, cooking_time_minutes, estimated_cost, servings, missing_ingredients, tags')
+    .select('id, slug, type, title, summary, side_dishes, image_path, image_url, cooking_time_minutes, estimated_cost, servings, missing_ingredients, tags, cuisine, difficulty, nutrition')
     .eq('type', mealType)
     .eq('active', true)
+    .eq('content_status', 'published')
+    .order('popularity_score', { ascending: false })
+    .order('id', { ascending: true })
     .limit(30)
 
   if (excludeMealIds.length > 0) {

@@ -5,17 +5,19 @@ import {ActivityIndicator,Image,Pressable,ScrollView,StyleSheet,Text,View,useWin
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {persistShoppingSnapshot} from '../../src/cloud-sync';
 import {Button,IconButton} from '../../src/components';
+import {getCachedMeal} from '../../src/catalog';
 import {meals} from '../../src/data';
 import {useAppStore} from '../../src/store';
 import {colors} from '../../src/theme';
 import {RecipeStep} from '../../src/types';
 import {useRecipe} from '../../src/use-recipe';
+import {useMeal} from '../../src/use-catalog';
 
 type Tab='ingredients'|'steps'|'nutrition'|'replace';
 
 export default function Recipe(){
  const {id}=useLocalSearchParams<{id:string}>(),mealId=id??meals[0].id,{width}=useWindowDimensions(),tablet=width>=768;
- const meal=meals.find(item=>item.id===mealId)??meals[0],{recipe,source,loading}=useRecipe(meal.id);
+ const meal=useMeal(mealId)??getCachedMeal(mealId)??meals[0],{recipe,source,loading}=useRecipe(mealId);
  const add=useAppStore(state=>state.addMissing),availability=useAppStore(state=>state.ingredientAvailability),toggleAvailability=useAppStore(state=>state.toggleIngredientAvailability),familyId=useAppStore(state=>state.family?.id),[tab,setTab]=useState<Tab>('ingredients');
  const ingredients=recipe.ingredients.map(item=>({...item,available:availability[item.id]??false}));
  const missingCount=ingredients.filter(item=>!item.available).length;
@@ -38,7 +40,7 @@ export default function Recipe(){
     {tablet?<View style={x.right}><Image source={meal.image} style={x.tabletHero}/><View style={x.tip}><Text style={x.tipTitle}>Mẹo nhỏ</Text><Text style={x.muted}>Chuẩn bị và định lượng nguyên liệu trước khi nấu để các bước diễn ra nhanh, đều vị hơn.</Text></View><Steps compact steps={recipe.steps}/></View>:null}
    </View>
   </ScrollView>
-  <View style={x.footer}><Button title={`🛒  Thêm ${missingCount} nguyên liệu cần mua`} outline onPress={addToShopping}/><Button title="Bắt đầu nấu" onPress={()=>router.push(`/cooking/${meal.id}`)}/></View>
+  <View style={x.footer}><Button title={`🛒  Thêm ${missingCount} nguyên liệu cần mua`} outline onPress={addToShopping}/><Button title="Bắt đầu nấu" onPress={()=>router.push(`/cooking/${mealId}`)}/></View>
  </SafeAreaView>;
 }
 

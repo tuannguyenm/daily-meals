@@ -21,4 +21,4 @@ otp_length = 8
 otp_expiry = 3600
 
 [functions.recommendations]
-verify_jwt = true
+verify_jwt = false

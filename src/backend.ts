@@ -1,10 +1,10 @@
 import {supabase} from './supabase';
-import {meals} from './data';
+import {CatalogMealRow,getCachedMeal,hydrateCatalogMeal} from './catalog';
 import {FamilyProfile,Meal,MealType,ShoppingItem} from './types';
 
 interface FamilyRow{id:string;name:string;location:string|null;adults:number;children:number;meals_to_plan:FamilyProfile['mealsToPlan'];budget_level:FamilyProfile['budgetLevel'];cooking_time_preference:FamilyProfile['cookingTimePreference']}
 function toProfile(row:FamilyRow):FamilyProfile{return{id:row.id,name:row.name,location:row.location??'',adults:row.adults,children:row.children,mealsToPlan:row.meals_to_plan,budgetLevel:row.budget_level,cookingTimePreference:row.cooking_time_preference}}
-interface DailyPlanMealRow{meal_type:MealType;meal_id:string;status:Meal['status']}
+interface DailyPlanMealRow{meal_type:MealType;meal_id:string;status:Meal['status'];meal?:CatalogMealRow|null}
 interface DailyPlanRow{id:string;daily_plan_meals:DailyPlanMealRow[]}
 interface ShoppingRow{id:string;name:string;quantity:string;category:string;checked:boolean;position?:number}
 interface ShoppingListRow{id:string;shopping_items:ShoppingRow[]}
@@ -33,13 +33,13 @@ export async function syncFamilyProfile(profile:FamilyProfile):Promise<FamilyPro
 
 export async function loadDailyPlan(familyId:string,planDate=localDateKey()):Promise<{exists:boolean;meals:Partial<Record<MealType,Meal>>}>{
  if(!supabase||!isCloudFamilyId(familyId))return{exists:false,meals:{}};
- const {data,error}=await supabase.from('daily_plans').select('id,daily_plan_meals(meal_type,meal_id,status)').eq('family_id',familyId).eq('plan_date',planDate).maybeSingle();
+ const {data,error}=await supabase.from('daily_plans').select('id,daily_plan_meals(meal_type,meal_id,status,meal:meals(id,slug,type,title,summary,side_dishes,image_path,image_url,cooking_time_minutes,estimated_cost,servings,missing_ingredients,tags,cuisine,difficulty,nutrition))').eq('family_id',familyId).eq('plan_date',planDate).maybeSingle();
  if(error)throw error;
  const row=data as unknown as DailyPlanRow|null;
  if(!row)return{exists:false,meals:{}};
  const selected:Partial<Record<MealType,Meal>>={};
  for(const item of row.daily_plan_meals??[]){
-  const meal=meals.find(candidate=>candidate.id===item.meal_id);
+  const meal=item.meal?hydrateCatalogMeal(item.meal):getCachedMeal(item.meal_id);
   if(meal)selected[item.meal_type]={...meal,status:item.status};
  }
  return{exists:true,meals:selected};

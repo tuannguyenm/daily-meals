@@ -12,7 +12,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
     "test": "jest --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "catalog:validate": "node scripts/catalog/validate-catalog.mjs",
+    "catalog:import": "node scripts/catalog/import-catalog.mjs",
+    "catalog:smoke": "node scripts/catalog/smoke-catalog.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.0",
