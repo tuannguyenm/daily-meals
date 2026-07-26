@@ -76,7 +76,7 @@ const recipe=(mealId:string,ingredients:RecipeData['ingredients'],descriptions:s
  ingredients,
  steps:descriptions.map((description,index)=>({id:`${mealId}-step-${index+1}`,order:index+1,description})),
 });
-const ingredient=(mealId:string,index:number,name:string,quantity:string,category:string,available=true)=>({id:`${mealId}-ingredient-${index}`,name,quantity,category,available});
+const ingredient=(mealId:string,index:number,name:string,quantity:string,category:string,available=false)=>({id:`${mealId}-ingredient-${index}`,name,quantity,category,available});
 
 export const localRecipes:Record<string,RecipeData>={
  pho:recipe('pho',[

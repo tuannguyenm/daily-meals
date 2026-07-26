@@ -5,6 +5,7 @@ describe('app store',()=>{
  beforeEach(()=>useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
   recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:initialShopping,completedMealIds:[],
+  ingredientAvailability:{},
   cloudStatus:'idle',cloudError:undefined,
  }));
 
@@ -44,10 +45,20 @@ describe('app store',()=>{
 
  it('adds unavailable ingredients once',()=>{
   useAppStore.setState({shopping:[]});
-  useAppStore.getState().addMissing(ingredients);
-  expect(useAppStore.getState().shopping.map(item=>item.name)).toEqual(['Nấm bào ngư']);
-  useAppStore.getState().addMissing(ingredients);
-  expect(useAppStore.getState().shopping).toHaveLength(1);
+  const userCheckedIngredients=ingredients.map((item,index)=>({...item,available:index===0}));
+  useAppStore.getState().addMissing(userCheckedIngredients);
+  expect(useAppStore.getState().shopping.map(item=>item.name)).toEqual(ingredients.slice(1).map(item=>item.name));
+  useAppStore.getState().addMissing(userCheckedIngredients);
+  expect(useAppStore.getState().shopping).toHaveLength(ingredients.length-1);
+ });
+
+ it('persists ingredient availability selected by the user',()=>{
+  const ingredientId=ingredients[0].id;
+  expect(useAppStore.getState().ingredientAvailability[ingredientId]).toBeUndefined();
+  useAppStore.getState().toggleIngredientAvailability(ingredientId);
+  expect(useAppStore.getState().ingredientAvailability[ingredientId]).toBe(true);
+  useAppStore.getState().toggleIngredientAvailability(ingredientId);
+  expect(useAppStore.getState().ingredientAvailability[ingredientId]).toBe(false);
  });
 
  it('removes one shopping item without affecting the rest',()=>{

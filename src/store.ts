@@ -14,6 +14,7 @@ export interface AppState{
  selectedMeals:Partial<Record<MealType,Meal>>;
  recommendationHistory:RecommendationHistoryItem[];
  shopping:ShoppingItem[];
+ ingredientAvailability:Record<string,boolean>;
  completedMealIds:string[];
  cloudStatus:'idle'|'syncing'|'synced'|'offline';
  cloudError?:string;
@@ -25,6 +26,7 @@ export interface AppState{
  rejectMeal:(mealType:MealType,meal:Meal,reason:string)=>void;
  completeMeal:(mealId:string)=>void;
  toggle:(id:string)=>void;
+ toggleIngredientAvailability:(id:string)=>void;
  addMissing:(value:RecipeIngredient[])=>void;
  addItem:(value:ShoppingItem)=>void;
  removeItem:(id:string)=>void;
@@ -41,6 +43,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
  selectedMeals:{},
  recommendationHistory:[],
  shopping:initialShopping,
+ ingredientAvailability:{},
  completedMealIds:[],
  cloudStatus:'idle',
  setFamily:family=>set({family,onboardingCompleted:true}),
@@ -57,6 +60,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
   selectedMeals:Object.fromEntries(Object.entries(state.selectedMeals).map(([mealType,meal])=>[mealType,meal?.id===mealId?{...meal,status:'completed' as const}:meal])),
  })),
  toggle:id=>set(state=>({shopping:state.shopping.map(item=>item.id===id?{...item,checked:!item.checked}:item)})),
+ toggleIngredientAvailability:id=>set(state=>({ingredientAvailability:{...state.ingredientAvailability,[id]:!state.ingredientAvailability[id]}})),
  addMissing:value=>set(state=>({
   shopping:[
    ...state.shopping,
@@ -71,7 +75,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
 }),{
  name:'daily-meals',
  storage:createJSONStorage(()=>AsyncStorage),
- version:4,
+ version:5,
  migrate:persisted=>{
   const old=persisted as Partial<AppState>&{selectedMeal?:Meal};
   return{
@@ -79,6 +83,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
    onboardingCompleted:Boolean(old.onboardingCompleted||old.family),
    selectedMeals:old.selectedMeals??(old.selectedMeal?{dinner:old.selectedMeal}:{}),
    completedMealIds:old.completedMealIds??[],
+   ingredientAvailability:old.ingredientAvailability??{},
    cloudStatus:'idle',
   } as AppState;
  },
@@ -91,6 +96,7 @@ export const useAppStore=create<AppState>()(persist((set)=>({
   selectedMeals:state.selectedMeals,
   recommendationHistory:state.recommendationHistory,
   shopping:state.shopping,
+  ingredientAvailability:state.ingredientAvailability,
   completedMealIds:state.completedMealIds,
  }),
 }));

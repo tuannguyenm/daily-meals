@@ -29,7 +29,7 @@ describe('recipe service',()=>{
   mockTableResults({data:ingredientRows,error:null},{data:stepRows,error:null});
   const result=await loadRecipe('ca');
   expect(result.source).toBe('cloud');
-  expect(result.recipe).toMatchObject({mealId:'ca',ingredients:[{name:'Cá basa',available:true},{name:'Rau cải',available:false}]});
+  expect(result.recipe).toMatchObject({mealId:'ca',ingredients:[{name:'Cá basa',available:false},{name:'Rau cải',available:false}]});
   expect(result.recipe.steps[0]).toMatchObject({order:1,description:'Ướp cá.'});
   expect(await AsyncStorage.getItem('daily-meals:recipe:v1:ca')).toContain('Cá basa');
  });
@@ -38,7 +38,7 @@ describe('recipe service',()=>{
   const cached={mealId:'ca',ingredients:[{id:'cached-i',name:'Cá cache',quantity:'1kg',category:'Thịt & Hải sản',available:true}],steps:[{id:'cached-s',order:1,description:'Bước cache'}]};
   await AsyncStorage.setItem('daily-meals:recipe:v1:ca',JSON.stringify(cached));
   mockTableResults({data:null,error:{message:'offline'}},{data:null,error:{message:'offline'}});
-  await expect(loadRecipe('ca')).resolves.toEqual({recipe:cached,source:'cache'});
+  await expect(loadRecipe('ca')).resolves.toEqual({recipe:{...cached,ingredients:[{...cached.ingredients[0],available:false}]},source:'cache'});
  });
 
  it('falls back to the bundled recipe for the requested meal',async()=>{

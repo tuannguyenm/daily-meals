@@ -33,7 +33,7 @@ const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jes
 function resetStore(){
  useAppStore.setState({
   family:undefined,onboardingCompleted:false,activeMealType:'breakfast',selectedPriorities:[],
-  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:[],completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
+  recommendations:{},selectedMeals:{},recommendationHistory:[],shopping:[],ingredientAvailability:{},completedMealIds:[],cloudStatus:'idle',cloudError:undefined,
  });
 }
 
@@ -70,9 +70,12 @@ describe('Daily Meals integration flow',()=>{
 
   mockParams={id:recommended?.id};
   const recipe=render(<Recipe/>);
+  const firstIngredient=getLocalRecipe(recommended!.id).ingredients[0];
+  fireEvent.press(recipe.getByLabelText(`${firstIngredient.name}, ${firstIngredient.quantity}`));
+  expect(useAppStore.getState().ingredientAvailability[firstIngredient.id]).toBe(true);
   fireEvent.press(recipe.getByLabelText(/Thêm \d+ nguyên liệu cần mua/));
   expect(useAppStore.getState().shopping.length).toBeGreaterThan(0);
-  const expectedMissing=getLocalRecipe(recommended!.id).ingredients.filter(item=>!item.available);
+  const expectedMissing=getLocalRecipe(recommended!.id).ingredients.filter(item=>item.id!==firstIngredient.id);
   expect(useAppStore.getState().shopping.map(item=>item.name)).toEqual(expectedMissing.map(item=>item.name));
   expect(persistShoppingSnapshot).toHaveBeenCalled();
   expect(mockRouter.push).toHaveBeenCalledWith('/tabs/shopping');

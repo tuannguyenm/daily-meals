@@ -9,6 +9,7 @@ export type RecipeSource='cloud'|'cache'|'fallback';
 export interface RecipeLoadResult{recipe:RecipeData;source:RecipeSource}
 
 const cacheKey=(mealId:string)=>`daily-meals:recipe:v1:${mealId}`;
+const resetAvailability=(recipe:RecipeData):RecipeData=>({...recipe,ingredients:recipe.ingredients.map(item=>({...item,available:false}))});
 
 function isRecipeData(value:unknown):value is RecipeData{
  if(!value||typeof value!=='object')return false;
@@ -29,7 +30,7 @@ export async function loadRecipe(mealId:string):Promise<RecipeLoadResult>{
    if(!ingredients.length||!steps.length)throw new Error('RECIPE_NOT_FOUND');
    const recipe:RecipeData={
     mealId,
-    ingredients:ingredients.map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:item.category,available:item.available_by_default})),
+    ingredients:ingredients.map(item=>({id:item.id,name:item.name,quantity:item.quantity,category:item.category,available:false})),
     steps:steps.map(item=>({id:item.id,order:item.position,description:item.description})),
    };
    await AsyncStorage.setItem(cacheKey(mealId),JSON.stringify(recipe));
@@ -42,10 +43,10 @@ export async function loadRecipe(mealId:string):Promise<RecipeLoadResult>{
   const cached=await AsyncStorage.getItem(cacheKey(mealId));
   if(cached){
    const parsed:unknown=JSON.parse(cached);
-   if(isRecipeData(parsed))return{recipe:parsed,source:'cache'};
+   if(isRecipeData(parsed))return{recipe:resetAvailability(parsed),source:'cache'};
   }
  }catch{
   // Ignore invalid or unavailable cache and use the bundled fallback.
  }
- return{recipe:getLocalRecipe(mealId),source:'fallback'};
+ return{recipe:resetAvailability(getLocalRecipe(mealId)),source:'fallback'};
 }
