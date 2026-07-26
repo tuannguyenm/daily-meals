@@ -1,0 +1,359 @@
+{
+  "banh-mi-op-la": {
+    "ingredients": [
+      ["Trứng gà", "4 quả", "Thịt & Hải sản"],
+      ["Bánh mì", "4 ổ", "Gia vị & Khác"],
+      ["Cà chua", "2 quả", "Rau củ"],
+      ["Dưa leo", "2 quả", "Rau củ"],
+      ["Hành lá", "2 nhánh", "Rau củ"],
+      ["Dầu ăn", "1 muỗng canh", "Gia vị & Khác"],
+      ["Nước tương", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Rửa sạch cà chua, dưa leo và hành lá; thái lát rau củ, cắt nhỏ hành.",
+      "Làm nóng chảo với dầu, đập trứng vào và chiên lửa vừa đến khi lòng trắng chín, lòng đỏ còn mềm.",
+      "Rắc hành lá và tiêu lên trứng; làm nóng bánh mì trong chảo hoặc lò 2–3 phút.",
+      "Dùng trứng ngay cùng bánh mì, cà chua, dưa leo và nước tương."
+    ]
+  },
+  "bun-bo": {
+    "ingredients": [
+      ["Bún sợi lớn", "700g", "Gia vị & Khác"],
+      ["Thịt bò bắp", "400g", "Thịt & Hải sản"],
+      ["Chả Huế", "200g", "Thịt & Hải sản"],
+      ["Sả", "4 cây", "Rau củ"],
+      ["Hành tây", "1 củ", "Rau củ"],
+      ["Mắm ruốc Huế", "1 muỗng canh", "Gia vị & Khác"],
+      ["Rau sống và giá", "400g", "Rau củ"]
+    ],
+    "steps": [
+      "Đập dập sả, hòa mắm ruốc với nước rồi lọc lấy phần trong; thái mỏng hành tây và thịt bò.",
+      "Đun nước dùng với sả 15 phút, thêm phần mắm ruốc đã lọc và nêm nước mắm, đường phèn vừa vị.",
+      "Cho thịt bò vào nấu vừa chín, thêm chả Huế; chần bún qua nước sôi và chia vào tô.",
+      "Xếp thịt, chả và hành tây lên bún, chan nước dùng nóng; dùng cùng rau sống và giá."
+    ]
+  },
+  "mien-ga": {
+    "ingredients": [
+      ["Miến dong", "400g", "Gia vị & Khác"],
+      ["Thịt gà", "500g", "Thịt & Hải sản"],
+      ["Nấm hương", "100g", "Rau củ"],
+      ["Hành tây", "1/2 củ", "Rau củ"],
+      ["Hành lá", "3 nhánh", "Rau củ"],
+      ["Nước dùng gà", "1.5 lít", "Gia vị & Khác"],
+      ["Nước mắm", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Ngâm miến và nấm hương riêng trong nước ấm; vớt ra, cắt miến vừa ăn và thái nấm.",
+      "Luộc gà trong nước dùng đến chín, vớt ra để nguội rồi xé sợi; nêm nước dùng với nước mắm.",
+      "Cho nấm vào nước dùng nấu 5 phút, sau đó cho miến vào nấu 1–2 phút đến vừa mềm.",
+      "Chia miến ra tô, thêm gà xé, hành tây và hành lá rồi chan nước dùng nóng."
+    ]
+  },
+  "xoi-ga": {
+    "ingredients": [
+      ["Gạo nếp", "500g", "Gia vị & Khác"],
+      ["Thịt gà", "400g", "Thịt & Hải sản"],
+      ["Hành tím", "5 củ", "Rau củ"],
+      ["Hành lá", "3 nhánh", "Rau củ"],
+      ["Dưa góp", "200g", "Rau củ"],
+      ["Nước mắm", "2 muỗng canh", "Gia vị & Khác"],
+      ["Dầu ăn", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Ngâm gạo nếp ít nhất 4 giờ, để ráo rồi trộn với một nhúm muối.",
+      "Hấp nếp 25–30 phút đến chín dẻo; luộc gà chín, để nguội và xé sợi.",
+      "Phi vàng hành tím; trộn gà với một ít nước mắm, tiêu và phần hành phi.",
+      "Xới xôi ra đĩa, thêm gà xé, mỡ hành và hành phi; dùng kèm dưa góp."
+    ]
+  },
+  "nui-xao-bo": {
+    "ingredients": [
+      ["Nui", "400g", "Gia vị & Khác"],
+      ["Thịt bò", "300g", "Thịt & Hải sản"],
+      ["Cà rốt", "1 củ", "Rau củ"],
+      ["Hành tây", "1 củ", "Rau củ"],
+      ["Sốt cà chua", "3 muỗng canh", "Gia vị & Khác"],
+      ["Tỏi", "3 tép", "Rau củ"],
+      ["Xà lách", "1 cây", "Rau củ"]
+    ],
+    "steps": [
+      "Luộc nui theo thời gian trên bao bì đến vừa mềm, xả nhanh với nước và để ráo.",
+      "Thái mỏng thịt bò, ướp với tỏi, nước tương và tiêu 10 phút; thái cà rốt và hành tây.",
+      "Xào nhanh thịt bò lửa lớn rồi lấy ra; xào rau củ, thêm nui và sốt cà chua.",
+      "Cho thịt bò trở lại chảo, đảo đều 1 phút và dùng ngay cùng xà lách."
+    ]
+  },
+  "banh-cuon": {
+    "ingredients": [
+      ["Bánh cuốn tươi", "600g", "Gia vị & Khác"],
+      ["Thịt heo xay", "250g", "Thịt & Hải sản"],
+      ["Nấm mèo", "80g", "Rau củ"],
+      ["Hành tím", "5 củ", "Rau củ"],
+      ["Chả lụa", "200g", "Thịt & Hải sản"],
+      ["Rau thơm", "1 bó", "Rau củ"],
+      ["Nước mắm chua ngọt", "200ml", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Ngâm nấm mèo đến nở, rửa sạch và băm nhỏ; thái hành tím, cắt lát chả lụa.",
+      "Phi thơm một nửa hành tím, xào thịt heo và nấm mèo đến chín, nêm nhẹ nước mắm và tiêu.",
+      "Trải bánh cuốn, cho nhân thịt vào rồi cuộn gọn; hấp lại 2 phút nếu bánh đã nguội.",
+      "Xếp bánh với chả lụa và rau thơm, rắc hành phi; dùng cùng nước mắm chua ngọt."
+    ]
+  },
+  "hu-tieu": {
+    "ingredients": [
+      ["Hủ tiếu", "600g", "Gia vị & Khác"],
+      ["Thịt heo", "350g", "Thịt & Hải sản"],
+      ["Thịt heo xay", "150g", "Thịt & Hải sản"],
+      ["Nước dùng xương", "1.5 lít", "Gia vị & Khác"],
+      ["Hẹ", "1 bó", "Rau củ"],
+      ["Giá đỗ", "250g", "Rau củ"],
+      ["Tỏi", "4 tép", "Rau củ"]
+    ],
+    "steps": [
+      "Luộc thịt heo trong nước dùng đến chín, vớt ra thái mỏng; xào chín thịt xay với một ít tỏi.",
+      "Nêm nước dùng với nước mắm, muối và đường phèn; giữ sôi nhẹ để nước trong.",
+      "Chần hủ tiếu và giá trong nước sôi, để ráo rồi chia vào tô.",
+      "Thêm thịt thái, thịt xay, hẹ và tỏi phi; chan nước dùng nóng và dùng ngay."
+    ]
+  },
+  "thit-kho-trung": {
+    "ingredients": [
+      ["Thịt ba chỉ", "500g", "Thịt & Hải sản"],
+      ["Trứng gà", "4 quả", "Thịt & Hải sản"],
+      ["Nước dừa", "500ml", "Gia vị & Khác"],
+      ["Hành tím", "3 củ", "Rau củ"],
+      ["Tỏi", "3 tép", "Rau củ"],
+      ["Nước mắm", "3 muỗng canh", "Gia vị & Khác"],
+      ["Đường", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Cắt thịt miếng vuông, chần nhanh rồi rửa sạch; luộc chín trứng và bóc vỏ.",
+      "Ướp thịt với hành tỏi băm, nước mắm, đường và tiêu trong 20 phút.",
+      "Thắng nhẹ đường tạo màu, cho thịt vào đảo săn rồi thêm nước dừa và nấu nhỏ lửa 25 phút.",
+      "Cho trứng vào kho thêm 15 phút đến khi thịt mềm và nước kho trong, vị đậm vừa."
+    ]
+  },
+  "bo-xao-bong-cai": {
+    "ingredients": [
+      ["Thịt bò", "350g", "Thịt & Hải sản"],
+      ["Bông cải xanh", "300g", "Rau củ"],
+      ["Ớt chuông đỏ", "1 quả", "Rau củ"],
+      ["Cà rốt", "1 củ", "Rau củ"],
+      ["Tỏi", "4 tép", "Rau củ"],
+      ["Dầu hào", "2 muỗng canh", "Gia vị & Khác"],
+      ["Dầu ăn", "1 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Thái mỏng thịt bò, ướp với một nửa tỏi, dầu hào và tiêu 10 phút.",
+      "Cắt bông cải, ớt chuông và cà rốt vừa ăn; chần bông cải 1 phút rồi để ráo.",
+      "Xào thịt bò lửa lớn đến vừa tái rồi lấy ra; phi phần tỏi còn lại và xào rau củ.",
+      "Cho bò trở lại chảo, đảo nhanh 1 phút, nêm vừa ăn và tắt bếp."
+    ]
+  },
+  "tom-rim": {
+    "ingredients": [
+      ["Tôm tươi", "500g", "Thịt & Hải sản"],
+      ["Hành tím", "3 củ", "Rau củ"],
+      ["Tỏi", "3 tép", "Rau củ"],
+      ["Hành lá", "3 nhánh", "Rau củ"],
+      ["Nước mắm", "2 muỗng canh", "Gia vị & Khác"],
+      ["Đường", "1.5 muỗng canh", "Gia vị & Khác"],
+      ["Dầu ăn", "1 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Cắt râu, rút chỉ lưng và rửa sạch tôm; để thật ráo.",
+      "Phi thơm hành tỏi, cho tôm vào đảo lửa lớn đến khi chuyển màu.",
+      "Thêm nước mắm, đường và 3 muỗng canh nước; rim lửa vừa 7–8 phút.",
+      "Khi sốt sánh và bám tôm, thêm tiêu, hành lá rồi tắt bếp."
+    ]
+  },
+  "canh-chua-ca": {
+    "ingredients": [
+      ["Cá basa", "600g", "Thịt & Hải sản"],
+      ["Cà chua", "3 quả", "Rau củ"],
+      ["Dứa", "1/3 quả", "Rau củ"],
+      ["Bạc hà", "3 cây", "Rau củ"],
+      ["Đậu bắp", "200g", "Rau củ"],
+      ["Giá đỗ", "200g", "Rau củ"],
+      ["Me chua", "50g", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Rửa cá với nước muối loãng, cắt khúc; sơ chế cà chua, dứa, bạc hà và đậu bắp.",
+      "Dằm me với nước nóng rồi lọc; đun sôi khoảng 1.2 lít nước cùng nước me và dứa.",
+      "Cho cá vào nấu 7 phút, hớt bọt; thêm cà chua, bạc hà và đậu bắp.",
+      "Nêm nước mắm, đường cân bằng chua ngọt; thêm giá và rau thơm rồi tắt bếp."
+    ]
+  },
+  "suon-xao-chua-ngot": {
+    "ingredients": [
+      ["Sườn non", "600g", "Thịt & Hải sản"],
+      ["Dứa", "1/2 quả", "Rau củ"],
+      ["Ớt chuông", "2 quả", "Rau củ"],
+      ["Hành tây", "1 củ", "Rau củ"],
+      ["Tỏi", "3 tép", "Rau củ"],
+      ["Giấm gạo", "2 muỗng canh", "Gia vị & Khác"],
+      ["Đường", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Chặt sườn miếng vừa ăn, chần 2 phút rồi rửa sạch; luộc sườn thêm 12 phút và để ráo.",
+      "Áp chảo sườn đến vàng các mặt; pha giấm, đường, nước mắm và một ít nước.",
+      "Phi tỏi, xào hành tây, ớt chuông và dứa 2 phút rồi cho sườn vào.",
+      "Rót sốt chua ngọt, đảo lửa vừa đến khi sốt sánh và bám đều sườn."
+    ]
+  },
+  "ga-kho-gung": {
+    "ingredients": [
+      ["Thịt gà", "600g", "Thịt & Hải sản"],
+      ["Gừng", "1 củ", "Rau củ"],
+      ["Hành tím", "3 củ", "Rau củ"],
+      ["Hành lá", "3 nhánh", "Rau củ"],
+      ["Nước mắm", "2.5 muỗng canh", "Gia vị & Khác"],
+      ["Đường", "1 muỗng canh", "Gia vị & Khác"],
+      ["Dầu ăn", "1 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Chặt gà miếng vừa ăn; thái sợi gừng, băm hành tím và cắt nhỏ hành lá.",
+      "Ướp gà với một nửa gừng, hành tím, nước mắm, đường và tiêu 15 phút.",
+      "Đảo gà trên lửa vừa đến săn, thêm 150ml nước và phần gừng còn lại.",
+      "Kho nhỏ lửa 20 phút đến khi gà chín và sốt sánh; rắc hành lá."
+    ]
+  },
+  "dau-hu-nhoi-thit": {
+    "ingredients": [
+      ["Đậu hũ", "6 miếng", "Gia vị & Khác"],
+      ["Thịt heo xay", "250g", "Thịt & Hải sản"],
+      ["Cà chua", "4 quả", "Rau củ"],
+      ["Nấm mèo", "40g", "Rau củ"],
+      ["Hành tím", "2 củ", "Rau củ"],
+      ["Hành lá", "3 nhánh", "Rau củ"],
+      ["Nước mắm", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Ngâm nấm mèo, băm nhỏ rồi trộn với thịt xay, hành tím, nước mắm và tiêu.",
+      "Rạch một cạnh đậu hũ, lấy bớt ruột và nhồi nhân thịt vừa chặt.",
+      "Áp chảo đậu hũ đến vàng nhẹ; xào mềm cà chua với một nhúm muối.",
+      "Cho đậu vào sốt cà, thêm 100ml nước và nấu đậy nắp 12 phút; rắc hành lá."
+    ]
+  },
+  "ca-hap-gung": {
+    "ingredients": [
+      ["Cá diêu hồng", "1 con khoảng 1kg", "Thịt & Hải sản"],
+      ["Gừng", "1 củ", "Rau củ"],
+      ["Hành lá", "5 nhánh", "Rau củ"],
+      ["Hành tây", "1/2 củ", "Rau củ"],
+      ["Rau mùi", "1 bó nhỏ", "Rau củ"],
+      ["Nước tương", "3 muỗng canh", "Gia vị & Khác"],
+      ["Dầu mè", "1 muỗng cà phê", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Làm sạch cá, khứa nhẹ hai mặt; thái sợi gừng, hành tây và hành lá.",
+      "Đặt một nửa gừng hành dưới cá, phần còn lại phủ lên trên; rưới nước tương.",
+      "Hấp cá khi nước đã sôi trong 18–22 phút tùy kích thước, đến khi thịt cá tách dễ.",
+      "Rưới dầu mè, thêm rau mùi và dùng nóng cùng rau luộc."
+    ]
+  },
+  "bo-luc-lac": {
+    "ingredients": [
+      ["Thịt bò thăn", "500g", "Thịt & Hải sản"],
+      ["Khoai tây", "3 củ", "Rau củ"],
+      ["Ớt chuông", "2 quả", "Rau củ"],
+      ["Hành tây", "1 củ", "Rau củ"],
+      ["Xà lách", "1 cây", "Rau củ"],
+      ["Tỏi", "4 tép", "Rau củ"],
+      ["Dầu hào", "2 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Cắt bò thành khối 2–3cm, ướp với tỏi, dầu hào, nước tương và tiêu 15 phút.",
+      "Cắt khoai tây thành múi, áp chảo hoặc nướng đến vàng; cắt hành tây và ớt chuông.",
+      "Làm chảo thật nóng, áp bò từng mẻ 1–2 phút để mặt ngoài xém mà bên trong còn mềm.",
+      "Xào nhanh hành và ớt, cho bò trở lại đảo 30 giây; dùng cùng khoai và xà lách."
+    ]
+  },
+  "ga-nuong-mat-ong": {
+    "ingredients": [
+      ["Đùi gà", "6 chiếc", "Thịt & Hải sản"],
+      ["Mật ong", "3 muỗng canh", "Gia vị & Khác"],
+      ["Tỏi", "4 tép", "Rau củ"],
+      ["Nước tương", "2 muỗng canh", "Gia vị & Khác"],
+      ["Dầu hào", "1 muỗng canh", "Gia vị & Khác"],
+      ["Cà rốt", "1 củ", "Rau củ"],
+      ["Xà lách", "1 cây", "Rau củ"]
+    ],
+    "steps": [
+      "Khứa nhẹ đùi gà; trộn mật ong, tỏi băm, nước tương, dầu hào và tiêu.",
+      "Ướp gà ít nhất 30 phút; làm nóng lò ở 200°C.",
+      "Nướng gà 25 phút, lật mặt và phết sốt ướp; nướng thêm 12–15 phút đến chín.",
+      "Để gà nghỉ 5 phút rồi dùng cùng salad cà rốt và xà lách."
+    ]
+  },
+  "tom-xao-rau-cu": {
+    "ingredients": [
+      ["Tôm tươi", "450g", "Thịt & Hải sản"],
+      ["Bông cải xanh", "250g", "Rau củ"],
+      ["Đậu Hà Lan", "150g", "Rau củ"],
+      ["Cà rốt", "1 củ", "Rau củ"],
+      ["Ớt chuông đỏ", "1 quả", "Rau củ"],
+      ["Tỏi", "3 tép", "Rau củ"],
+      ["Dầu hào", "1.5 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Bóc vỏ, rút chỉ tôm và để ráo; cắt rau củ vừa ăn.",
+      "Chần bông cải, cà rốt và đậu Hà Lan 1 phút, vớt ra để ráo.",
+      "Phi tỏi, xào tôm lửa lớn đến vừa đổi màu rồi lấy ra.",
+      "Xào rau củ 2 phút, thêm dầu hào và tôm; đảo thêm 1 phút rồi tắt bếp."
+    ]
+  },
+  "canh-ga-la-giang": {
+    "ingredients": [
+      ["Thịt gà", "600g", "Thịt & Hải sản"],
+      ["Lá giang", "1 bó", "Rau củ"],
+      ["Cà chua", "2 quả", "Rau củ"],
+      ["Hành tím", "3 củ", "Rau củ"],
+      ["Rau mùi", "1 bó nhỏ", "Rau củ"],
+      ["Nước mắm", "2 muỗng canh", "Gia vị & Khác"],
+      ["Dầu ăn", "1 muỗng canh", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Chặt gà miếng vừa ăn; vò nhẹ lá giang đã rửa sạch, bổ múi cà chua.",
+      "Phi hành tím, xào gà đến săn rồi thêm 1.2 lít nước và nấu 18 phút.",
+      "Cho cà chua và lá giang vào, nấu thêm 5 phút để vị chua hòa vào nước.",
+      "Nêm nước mắm và đường vừa vị, thêm rau mùi rồi tắt bếp."
+    ]
+  },
+  "thit-luon-rau-cu": {
+    "ingredients": [
+      ["Thịt ba chỉ", "500g", "Thịt & Hải sản"],
+      ["Rau củ thập cẩm", "500g", "Rau củ"],
+      ["Gừng", "1 nhánh", "Rau củ"],
+      ["Hành tím", "2 củ", "Rau củ"],
+      ["Mắm nêm", "120ml", "Gia vị & Khác"],
+      ["Dứa băm", "80g", "Rau củ"],
+      ["Chanh", "1 quả", "Rau củ"]
+    ],
+    "steps": [
+      "Rửa thịt, cho vào nồi nước cùng gừng và hành tím; luộc sôi nhẹ 22–25 phút.",
+      "Vớt thịt ngâm nước nguội 3 phút rồi để ráo và thái lát mỏng.",
+      "Luộc từng loại rau củ vừa chín để giữ màu và độ giòn, sau đó để ráo.",
+      "Pha mắm nêm với dứa băm, đường và chanh; dùng cùng thịt và rau củ."
+    ]
+  },
+  "bun-cha": {
+    "ingredients": [
+      ["Bún tươi", "700g", "Gia vị & Khác"],
+      ["Thịt heo xay", "350g", "Thịt & Hải sản"],
+      ["Thịt ba chỉ", "250g", "Thịt & Hải sản"],
+      ["Đu đủ xanh", "200g", "Rau củ"],
+      ["Cà rốt", "1 củ", "Rau củ"],
+      ["Rau sống", "400g", "Rau củ"],
+      ["Nước mắm", "120ml", "Gia vị & Khác"]
+    ],
+    "steps": [
+      "Ướp thịt xay và ba chỉ thái mỏng với hành tím, nước mắm, đường và tiêu 30 phút.",
+      "Nặn thịt xay thành miếng dẹt; nướng thịt và ba chỉ đến chín, cạnh hơi xém.",
+      "Pha nước chấm ấm từ nước mắm, đường, giấm và nước; thêm đu đủ, cà rốt ngâm chua.",
+      "Cho thịt nướng vào bát nước chấm, dùng cùng bún tươi và rau sống."
+    ]
+  }
+}

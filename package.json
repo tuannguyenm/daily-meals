@@ -15,7 +15,8 @@
     "test:watch": "jest --watch",
     "catalog:validate": "node scripts/catalog/validate-catalog.mjs",
     "catalog:import": "node scripts/catalog/import-catalog.mjs",
-    "catalog:smoke": "node scripts/catalog/smoke-catalog.mjs"
+    "catalog:smoke": "node scripts/catalog/smoke-catalog.mjs",
+    "catalog:prepare-production": "node scripts/catalog/prepare-production.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.0",

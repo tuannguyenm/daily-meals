@@ -112,3 +112,26 @@ secret when imports are automated.
 Imported meals should normally start with `"status": "review"`. Only
 `"published"` meals are returned to the app. Every entry records its source,
 license and content version, and every import creates an auditable batch record.
+
+### Current production seed
+
+The 30 bundled MVP meals use 30 distinct WebP covers. The 21 recipes that
+previously shared a generic instruction template are maintained in
+`content/curated-extra-recipes.json`; the original nine recipes remain in the
+app seed. Database migration `202607260007_production_catalog_content.sql`
+publishes the same recipe content and checksum-versioned Storage paths.
+
+For a later intentional content/image revision, always generate a new migration
+timestamp; never overwrite a migration already applied to Supabase:
+
+```bash
+npm run catalog:prepare-production -- --migration=YYYYMMDDHHMMSS_catalog_revision.sql
+npx supabase --experimental storage cp -r .catalog-upload ss:///meal-images/production --linked --jobs 5
+npx supabase db push --linked
+npm run catalog:smoke
+```
+
+The current content and images are AI-assisted, labeled with
+`source_type=ai_generated` and an internal-use license. A culinary editor should
+review cooking safety, allergens, nutrition and regional authenticity before a
+commercial release or medical/dietary claims are added.

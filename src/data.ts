@@ -1,20 +1,21 @@
 import {Meal,RecipeData,ShoppingItem} from './types';
+import curatedExtraRecipes from '../content/curated-extra-recipes.json';
 
-const chickenMushroomImage=require('../assets/images/ga-xao-nam-v2-optimized.jpg');
-const fishImage=require('../assets/images/ca-kho-to-v2-optimized.jpg');
-const riceImage=require('../assets/images/com-ga-v2-optimized.jpg');
-const phoImage=require('../assets/images/pho-bo-v2-optimized.jpg');
+const chickenMushroomImage=require('../assets/images/meals/ga.webp');
+const fishImage=require('../assets/images/meals/ca.webp');
+const riceImage=require('../assets/images/meals/com-ga.webp');
+const phoImage=require('../assets/images/meals/pho.webp');
 
 const baseMeals:Meal[]=[
  {id:'pho',type:'breakfast',title:'Phở bò',sideDishes:['Rau thơm','Giá đỗ'],image:phoImage,cookingTimeMinutes:30,estimatedCost:140000,servings:4,missingIngredients:['Rau thơm'],status:'unconfirmed'},
- {id:'chao-ga',type:'breakfast',title:'Cháo gà rau củ',sideDishes:['Trái cây theo mùa'],image:chickenMushroomImage,cookingTimeMinutes:20,estimatedCost:90000,servings:4,missingIngredients:[],status:'unconfirmed'},
- {id:'com-nam-sang',type:'breakfast',title:'Cơm nắm gà',sideDishes:['Sữa đậu nành'],image:riceImage,cookingTimeMinutes:15,estimatedCost:80000,servings:4,missingIngredients:['Rong biển'],status:'unconfirmed'},
+ {id:'chao-ga',type:'breakfast',title:'Cháo gà rau củ',sideDishes:['Trái cây theo mùa'],image:require('../assets/images/meals/chao-ga.webp'),cookingTimeMinutes:20,estimatedCost:90000,servings:4,missingIngredients:[],status:'unconfirmed'},
+ {id:'com-nam-sang',type:'breakfast',title:'Cơm nắm gà',sideDishes:['Sữa đậu nành'],image:require('../assets/images/meals/com-nam-sang.webp'),cookingTimeMinutes:15,estimatedCost:80000,servings:4,missingIngredients:['Rong biển'],status:'unconfirmed'},
  {id:'com-ga',type:'lunch',title:'Cơm gà rau củ',sideDishes:['Canh rau ngót'],image:riceImage,cookingTimeMinutes:25,estimatedCost:130000,servings:4,missingIngredients:['Rau ngót'],status:'unconfirmed'},
- {id:'ga-nam',type:'lunch',title:'Gà xào nấm',sideDishes:['Cơm nóng','Dưa leo'],image:chickenMushroomImage,cookingTimeMinutes:20,estimatedCost:120000,servings:4,missingIngredients:['Nấm bào ngư'],status:'unconfirmed'},
- {id:'ca-trua',type:'lunch',title:'Cá kho tiêu',sideDishes:['Canh bí đỏ','Rau luộc'],image:fishImage,cookingTimeMinutes:35,estimatedCost:160000,servings:4,missingIngredients:['Bí đỏ'],status:'unconfirmed'},
+ {id:'ga-nam',type:'lunch',title:'Gà xào nấm',sideDishes:['Cơm nóng','Dưa leo'],image:require('../assets/images/meals/ga-nam.webp'),cookingTimeMinutes:20,estimatedCost:120000,servings:4,missingIngredients:['Nấm bào ngư'],status:'unconfirmed'},
+ {id:'ca-trua',type:'lunch',title:'Cá kho tiêu',sideDishes:['Canh bí đỏ','Rau luộc'],image:require('../assets/images/meals/ca-trua.webp'),cookingTimeMinutes:35,estimatedCost:160000,servings:4,missingIngredients:['Bí đỏ'],status:'unconfirmed'},
  {id:'ca',type:'dinner',title:'Cá kho tộ',sideDishes:['Canh bí đỏ thịt bằm','Rau luộc'],image:fishImage,cookingTimeMinutes:35,estimatedCost:180000,servings:4,missingIngredients:['Rau cải','Hành lá'],status:'unconfirmed'},
  {id:'ga',type:'dinner',title:'Gà xào nấm rau củ',sideDishes:['Ít dầu mỡ, tốt cho sức khỏe'],image:chickenMushroomImage,cookingTimeMinutes:25,estimatedCost:150000,servings:4,missingIngredients:['Nấm bào ngư'],status:'confirmed'},
- {id:'dau',type:'dinner',title:'Đậu hũ sốt cà chua',sideDishes:['Thanh nhẹ, dễ ăn'],image:riceImage,cookingTimeMinutes:20,estimatedCost:90000,servings:4,missingIngredients:[],status:'confirmed'},
+ {id:'dau',type:'dinner',title:'Đậu hũ sốt cà chua',sideDishes:['Thanh nhẹ, dễ ăn'],image:require('../assets/images/meals/dau.webp'),cookingTimeMinutes:20,estimatedCost:90000,servings:4,missingIngredients:[],status:'confirmed'},
 ];
 
 type SeedIngredient=[name:string,quantity:string,category:string];
@@ -55,17 +56,34 @@ const extraMealSeeds:ExtraMealSeed[]=[
  {id:'bun-cha',type:'dinner',title:'Bún chả',sideDishes:['Rau sống','Đồ chua'],image:'rice',cookingTimeMinutes:35,estimatedCost:160000,main:['Thịt heo xay','500g','Thịt & Hải sản'],vegetable:['Đu đủ xanh','200g','Rau củ'],missing:['Bún tươi','700g','Gia vị & Khác']},
 ];
 
-function imageFor(seed:ExtraMealSeed){
- if(seed.image==='fish')return fishImage;
- if(seed.image==='pho')return phoImage;
- if(seed.image==='rice')return riceImage;
- return chickenMushroomImage;
-}
+const extraImages:Record<string,Meal['image']>={
+ 'banh-mi-op-la':require('../assets/images/meals/banh-mi-op-la.webp'),
+ 'bun-bo':require('../assets/images/meals/bun-bo.webp'),
+ 'mien-ga':require('../assets/images/meals/mien-ga.webp'),
+ 'xoi-ga':require('../assets/images/meals/xoi-ga.webp'),
+ 'nui-xao-bo':require('../assets/images/meals/nui-xao-bo.webp'),
+ 'banh-cuon':require('../assets/images/meals/banh-cuon.webp'),
+ 'hu-tieu':require('../assets/images/meals/hu-tieu.webp'),
+ 'thit-kho-trung':require('../assets/images/meals/thit-kho-trung.webp'),
+ 'bo-xao-bong-cai':require('../assets/images/meals/bo-xao-bong-cai.webp'),
+ 'tom-rim':require('../assets/images/meals/tom-rim.webp'),
+ 'canh-chua-ca':require('../assets/images/meals/canh-chua-ca.webp'),
+ 'suon-xao-chua-ngot':require('../assets/images/meals/suon-xao-chua-ngot.webp'),
+ 'ga-kho-gung':require('../assets/images/meals/ga-kho-gung.webp'),
+ 'dau-hu-nhoi-thit':require('../assets/images/meals/dau-hu-nhoi-thit.webp'),
+ 'ca-hap-gung':require('../assets/images/meals/ca-hap-gung.webp'),
+ 'bo-luc-lac':require('../assets/images/meals/bo-luc-lac.webp'),
+ 'ga-nuong-mat-ong':require('../assets/images/meals/ga-nuong-mat-ong.webp'),
+ 'tom-xao-rau-cu':require('../assets/images/meals/tom-xao-rau-cu.webp'),
+ 'canh-ga-la-giang':require('../assets/images/meals/canh-ga-la-giang.webp'),
+ 'thit-luon-rau-cu':require('../assets/images/meals/thit-luon-rau-cu.webp'),
+ 'bun-cha':require('../assets/images/meals/bun-cha.webp'),
+};
 
 export const meals:Meal[]=[
  ...baseMeals,
  ...extraMealSeeds.map(seed=>({
-  id:seed.id,type:seed.type,title:seed.title,sideDishes:seed.sideDishes,image:imageFor(seed),
+  id:seed.id,type:seed.type,title:seed.title,sideDishes:seed.sideDishes,image:extraImages[seed.id],
   cookingTimeMinutes:seed.cookingTimeMinutes,estimatedCost:seed.estimatedCost,servings:4,
   missingIngredients:[seed.missing[0]],status:'unconfirmed' as const,
  })),
@@ -190,27 +208,18 @@ export const localRecipes:Record<string,RecipeData>={
 };
 
 for(const seed of extraMealSeeds){
- const [mainName,mainQuantity,mainCategory]=seed.main;
- const [vegetableName,vegetableQuantity,vegetableCategory]=seed.vegetable;
- const [missingName,missingQuantity,missingCategory]=seed.missing;
- localRecipes[seed.id]=recipe(seed.id,[
-  ingredient(seed.id,1,mainName,mainQuantity,mainCategory),
-  ingredient(seed.id,2,vegetableName,vegetableQuantity,vegetableCategory),
-  ingredient(seed.id,3,'Hành tím','3 củ','Gia vị & Khác'),
-  ingredient(seed.id,4,missingName,missingQuantity,missingCategory,false),
-  ingredient(seed.id,5,'Nước mắm','2 muỗng canh','Gia vị & Khác'),
- ],[
-  `Sơ chế ${mainName.toLowerCase()}, ${vegetableName.toLowerCase()} và các nguyên liệu còn lại.`,
-  `Ướp ${mainName.toLowerCase()} với hành tím, nước mắm và tiêu trong 10 phút.`,
-  `Nấu ${mainName.toLowerCase()} đến gần chín, thêm ${vegetableName.toLowerCase()} và đảo đều.`,
-  `Nêm lại vừa ăn, hoàn thiện món ${seed.title.toLowerCase()} và dùng khi còn nóng.`,
- ]);
+ const curated=curatedExtraRecipes[seed.id as keyof typeof curatedExtraRecipes];
+ localRecipes[seed.id]=recipe(
+  seed.id,
+  curated.ingredients.map(([name,quantity,category],index)=>ingredient(seed.id,index+1,name,quantity,category)),
+  curated.steps,
+ );
 }
 
 export function getLocalRecipe(mealId:string):RecipeData{return localRecipes[mealId]??localRecipes.ga}
 export const ingredients=getLocalRecipe('ga').ingredients;
 export const recipeSteps=getLocalRecipe('ga').steps;
-export const mealThumbs={pho:require('../assets/images/pho-bo-v2-optimized.jpg'),rice:require('../assets/images/com-ga-v2-optimized.jpg')};
+export const mealThumbs={pho:require('../assets/images/meals/pho.webp'),rice:require('../assets/images/meals/com-ga.webp')};
 export const initialShopping:ShoppingItem[]=[
  {id:'1',name:'Rau cải',quantity:'1 bó',category:'Rau củ',checked:false},
  {id:'2',name:'Hành lá',quantity:'1 bó',category:'Rau củ',checked:false},

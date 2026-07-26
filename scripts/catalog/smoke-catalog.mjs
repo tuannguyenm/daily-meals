@@ -36,12 +36,28 @@ try{
  if(searchError)throw searchError;
  const {count,error:ingredientError}=await client.from('ingredient_catalog').select('id',{count:'exact',head:true});
  if(ingredientError)throw ingredientError;
+ const {data:mealRows,error:mealError}=await client.from('meals').select('id,image_path,content_version').order('id');
+ if(mealError)throw mealError;
+ const {count:recipeIngredientCount,error:recipeIngredientError}=await client.from('recipe_ingredients').select('id',{count:'exact',head:true});
+ if(recipeIngredientError)throw recipeIngredientError;
+ const {count:recipeStepCount,error:recipeStepError}=await client.from('recipe_steps').select('id',{count:'exact',head:true});
+ if(recipeStepError)throw recipeStepError;
+ const imageStatuses=await Promise.all(mealRows.map(async meal=>{
+  if(!meal.image_path)return 0;
+  const imageUrl=client.storage.from('meal-images').getPublicUrl(meal.image_path).data.publicUrl;
+  return(await fetch(imageUrl,{method:'HEAD'})).status;
+ }));
  console.log(JSON.stringify({
   pageRows:data.length,
   total:Number(data[0]?.total_count??0),
   searchRows:searchData.length,
   ingredientCount:count,
   firstSlug:data[0]?.slug??null,
+  uniqueImagePaths:new Set(mealRows.map(meal=>meal.image_path)).size,
+  version2Meals:mealRows.filter(meal=>meal.content_version===2).length,
+  recipeIngredientCount,
+  recipeStepCount,
+  imageFailures:imageStatuses.filter(status=>status!==200).length,
  }));
 }catch(error){
  console.error(error instanceof Error?error.message:String(error));

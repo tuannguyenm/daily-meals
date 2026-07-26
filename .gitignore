@@ -8,6 +8,7 @@ dist/
 !.env.example
 
 supabase/.temp/
+.catalog-upload/
 
 android/.gradle/
 android/build/

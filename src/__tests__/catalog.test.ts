@@ -7,6 +7,7 @@ describe('meal catalog',()=>{
   expect(meals.filter(meal=>meal.type==='breakfast')).toHaveLength(10);
   expect(meals.filter(meal=>meal.type==='lunch')).toHaveLength(10);
   expect(meals.filter(meal=>meal.type==='dinner')).toHaveLength(10);
+  expect(new Set(meals.map(meal=>meal.image)).size).toBe(30);
  });
 
  it.each(meals.map(meal=>[meal.id,meal.title] as const))(
@@ -14,7 +15,7 @@ describe('meal catalog',()=>{
   (mealId)=>{
    const recipe=getLocalRecipe(mealId);
    expect(recipe.mealId).toBe(mealId);
-   expect(recipe.ingredients).toHaveLength(5);
+   expect(recipe.ingredients.length).toBeGreaterThanOrEqual(5);
    expect(recipe.steps).toHaveLength(4);
    expect(recipe.steps.map(step=>step.order)).toEqual([1,2,3,4]);
   },
