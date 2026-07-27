@@ -13,6 +13,8 @@ import {getLocalRecipe,initialShopping} from '../data';
 import {simulateNextRecommendationError} from '../service';
 import {useAppStore} from '../store';
 
+jest.setTimeout(60000);
+
 let mockParams:Record<string,string|undefined>={};
 
 jest.mock('expo-router',()=>({

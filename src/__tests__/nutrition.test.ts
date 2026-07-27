@@ -5,7 +5,8 @@ describe('recipe nutrition',()=>{
  it('provides complete per-serving estimates for every bundled meal',()=>{
   for(const meal of meals){
    const nutrition=nutritionForMeal(meal);
-   expect(nutrition).toMatchObject({perServing:true,estimateMethod:'editorial_recipe_estimate'});
+   expect(nutrition.perServing).toBe(true);
+   expect(['editorial_recipe_estimate','editorial_serving_estimate']).toContain(nutrition.estimateMethod);
    expect(nutrition.caloriesKcal).toBeGreaterThan(0);
    expect(nutrition.proteinGrams).toBeGreaterThan(0);
    expect(nutrition.carbsGrams).toBeGreaterThan(0);

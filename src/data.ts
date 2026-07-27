@@ -1,5 +1,6 @@
 import {Meal,RecipeData,ShoppingItem} from './types';
 import curatedExtraRecipes from '../content/curated-extra-recipes.json';
+import {expandedReadyMadeBreakfasts} from './ready-made-expansion';
 
 const chickenMushroomImage=require('../assets/images/meals/ga.webp');
 const fishImage=require('../assets/images/meals/ca.webp');
@@ -139,6 +140,7 @@ export const meals:Meal[]=[
   missingIngredients:[seed.missing[0]],status:'unconfirmed' as const,
  })),
  ...readyMadeBreakfasts,
+ ...expandedReadyMadeBreakfasts,
 ];
 
 const recipe=(mealId:string,ingredients:RecipeData['ingredients'],descriptions:string[]):RecipeData=>({
