@@ -15,9 +15,10 @@ import {useRecipe} from '../../src/use-recipe';
 import {useMeal} from '../../src/use-catalog';
 
 export default function CookingMode(){
- const {id}=useLocalSearchParams<{id:string}>(),mealId=id??meals[0].id,meal=useMeal(mealId)??getCachedMeal(mealId)??meals[0],{recipe,source,loading}=useRecipe(mealId);
+ const {id}=useLocalSearchParams<{id:string}>(),mealId=id??meals[0].id,meal=useMeal(mealId)??getCachedMeal(mealId)??meals[0],{recipe,source,loading}=useRecipe(mealId,meal.mealSource!=='ready_made');
  const completeMeal=useAppStore(state=>state.completeMeal),selectMeal=useAppStore(state=>state.selectMeal),selected=useAppStore(state=>state.selectedMeals),familyId=useAppStore(state=>state.family?.id),[finished,setFinished]=useState(false);
  const finish=()=>{if(selected[meal.type]?.id!==meal.id)selectMeal(meal.type,meal);completeMeal(meal.id);void Promise.all([persistMealSelection(familyId,meal.type,{...meal,status:'completed'}),persistRecommendationAction(familyId,meal.type,meal.id,'completed')]).catch(()=>undefined);setFinished(true)};
+ if(meal.mealSource==='ready_made')return <SafeAreaView style={x.safe}><View style={x.complete}><View style={x.completeIcon}><Ionicons name="bag-handle" size={48} color="#fff"/></View><Text style={x.completeTitle}>Món này không cần nấu</Text><Text style={x.completeText}>Hãy mở chi tiết để xem thời gian mua, giá dự kiến và xác nhận sau khi đã mua.</Text><View style={x.completeAction}><Button title="Xem chi tiết món" onPress={()=>router.replace(`/recipe/${meal.id}`)}/></View></View></SafeAreaView>;
  return <SafeAreaView style={x.safe}>{finished?<Completion mealTitle={meal.title}/>:<CookingSession meal={meal} steps={recipe.steps} loading={loading} offline={source!=='cloud'} onFinish={finish}/>}</SafeAreaView>;
 }
 

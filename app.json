@@ -2,7 +2,7 @@
   "expo": {
     "name": "Daily Meals",
     "slug": "daily-meals",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "default",
     "scheme": "dailymeals",
     "userInterfaceStyle": "light",
@@ -13,7 +13,7 @@
     },
     "android": {
       "package": "com.dailymeals.family",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon-v2.png",
         "backgroundColor": "#FFF6E9"

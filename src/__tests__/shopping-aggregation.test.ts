@@ -44,4 +44,10 @@ describe('weekly shopping aggregation',()=>{
   expect(result.filter(item=>item.name.toLocaleLowerCase('vi-VN')==='gạo')).toHaveLength(1);
   expect(result[0].source).toBe('recipe');
  });
+
+ it('never adds ingredients for a ready-made breakfast',()=>{
+  const breakfast=meals.find(meal=>meal.mealSource==='ready_made')!;
+  const rows:PlanIngredientRow[]=[{id:'unexpected',meal_id:breakfast.id,name:'Không được thêm',quantity:'1 phần',category:'Khác'}];
+  expect(aggregatePlanIngredients({'2026-07-20':{breakfast}},{},rows,[])).toEqual([]);
+ });
 });

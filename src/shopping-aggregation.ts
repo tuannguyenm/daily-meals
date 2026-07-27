@@ -51,7 +51,7 @@ export function aggregatePlanIngredients(
  rows:PlanIngredientRow[],
  existing:ShoppingItem[],
 ):ShoppingItem[]{
- const occurrences=Object.values(plans).flatMap(day=>Object.values(day).filter(Boolean));
+ const occurrences=Object.values(plans).flatMap(day=>Object.values(day).filter(meal=>Boolean(meal)&&meal!.mealSource!=='ready_made'));
  const rowsByMeal=new Map<string,PlanIngredientRow[]>();
  rows.forEach(row=>rowsByMeal.set(row.meal_id,[...(rowsByMeal.get(row.meal_id)??[]),row]));
  const aggregates=new Map<string,Aggregate>();
@@ -99,7 +99,7 @@ export async function buildWeeklyShoppingList(
  availability:Record<string,boolean>,
  existing:ShoppingItem[],
 ):Promise<ShoppingItem[]>{
- const mealIds=Object.values(plans).flatMap(day=>Object.values(day).filter(Boolean).map(meal=>meal!.id));
+ const mealIds=Object.values(plans).flatMap(day=>Object.values(day).filter(meal=>Boolean(meal)&&meal!.mealSource!=='ready_made').map(meal=>meal!.id));
  let rows:PlanIngredientRow[]=[];
  try{rows=await loadPlanIngredients(mealIds)}catch{/* Bundled recipes are the offline fallback. */}
  return aggregatePlanIngredients(plans,availability,rows,existing);

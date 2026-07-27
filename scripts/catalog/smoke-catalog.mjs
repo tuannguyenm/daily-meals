@@ -42,6 +42,11 @@ try{
  if(recipeIngredientError)throw recipeIngredientError;
  const {count:recipeStepCount,error:recipeStepError}=await client.from('recipe_steps').select('id',{count:'exact',head:true});
  if(recipeStepError)throw recipeStepError;
+ const {data:readyMeals,error:readyError}=await client.from('meals').select('id,meal_source,purchase_time_minutes,price_per_serving').eq('meal_source','ready_made');
+ if(readyError)throw readyError;
+ const readyIds=readyMeals.map(meal=>meal.id);
+ const {count:readyRecipeCount,error:readyRecipeError}=await client.from('recipe_steps').select('id',{count:'exact',head:true}).in('meal_id',readyIds);
+ if(readyRecipeError)throw readyRecipeError;
  const imageStatuses=await Promise.all(mealRows.map(async meal=>{
   if(!meal.image_path)return 0;
   const imageUrl=client.storage.from('meal-images').getPublicUrl(meal.image_path).data.publicUrl;
@@ -57,6 +62,9 @@ try{
   version2Meals:mealRows.filter(meal=>meal.content_version===2).length,
   recipeIngredientCount,
   recipeStepCount,
+  readyMadeMeals:readyMeals.length,
+  readyMadeWithoutPurchaseInfo:readyMeals.filter(meal=>!meal.purchase_time_minutes||!meal.price_per_serving).length,
+  readyMadeRecipeSteps:readyRecipeCount,
   imageFailures:imageStatuses.filter(status=>status!==200).length,
  }));
 }catch(error){

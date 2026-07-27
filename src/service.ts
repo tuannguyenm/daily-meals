@@ -19,6 +19,12 @@ function score(meal:Meal,priorities:MealPriority[],history:RecommendationHistory
  if(priorities.includes('budget'))value-=meal.estimatedCost/2000;
  if(priorities.includes('use-available'))value-=meal.missingIngredients.length*30;
  if(priorities.includes('no-cook'))value-=meal.cookingTimeMinutes*2;
+ if(meal.mealSource==='ready_made'){
+  if(meal.type==='breakfast')value+=18;
+  if(priorities.includes('quick'))value+=30;
+  if(priorities.includes('no-cook'))value+=60;
+  if(priorities.includes('budget')&&meal.pricePerServing&&meal.pricePerServing<=35000)value+=18;
+ }
  if(priorities.includes('healthy')&&/rau|đậu|cá/i.test(`${meal.title} ${meal.sideDishes.join(' ')}`))value+=45;
  if(priorities.includes('low-oil')&&/thanh|ít dầu|luộc|đậu/i.test(meal.sideDishes.join(' ')))value+=35;
  if(priorities.includes('kid-friendly')&&/gà|đậu|cơm/i.test(meal.title))value+=30;
@@ -44,9 +50,9 @@ export async function getMealRecommendations(mealType:MealType,priorities:MealPr
  const ranked=candidates.length?candidates:fallback;
  const meal=ranked[0];
  const reasons=[
-  priorities.includes('quick')?`Sẵn sàng trong ${meal.cookingTimeMinutes} phút`:'Phù hợp với thời điểm dùng bữa',
+  meal.mealSource==='ready_made'?`Có thể mua trong khoảng ${meal.purchaseTimeMinutes??meal.cookingTimeMinutes} phút`:priorities.includes('quick')?`Sẵn sàng trong ${meal.cookingTimeMinutes} phút`:'Phù hợp với thời điểm dùng bữa',
   priorities.includes('budget')?'Chi phí phù hợp ngân sách hôm nay':`Đủ ${meal.servings} phần cho cả gia đình`,
-  meal.missingIngredients.length===0?'Có đủ nguyên liệu đang cần':'Chỉ cần mua thêm ít nguyên liệu',
+  meal.mealSource==='ready_made'?'Không cần chuẩn bị nguyên liệu hay nấu':meal.missingIngredients.length===0?'Có đủ nguyên liệu đang cần':'Chỉ cần mua thêm ít nguyên liệu',
  ].slice(0,3);
  return{meal,alternatives:ranked.slice(1,3),reasons,priorities:[...priorities],generatedAt:new Date().toISOString(),source:'local'};
 }

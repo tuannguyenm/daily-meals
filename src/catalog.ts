@@ -35,6 +35,9 @@ export interface CatalogMealRow{
  cuisine?:string|null;
  difficulty?:Meal['difficulty']|null;
  nutrition?:Record<string,unknown>|null;
+ meal_source?:Meal['mealSource']|null;
+ purchase_time_minutes?:number|null;
+ price_per_serving?:number|null;
  total_count?:number|null;
 }
 
@@ -69,6 +72,9 @@ export function hydrateCatalogMeal(row:CatalogMealRow):Meal{
   cuisine:row.cuisine??undefined,
   difficulty:row.difficulty??undefined,
   nutrition:row.nutrition??undefined,
+  mealSource:row.meal_source??'home_cooked',
+  purchaseTimeMinutes:row.purchase_time_minutes??undefined,
+  pricePerServing:row.price_per_serving??undefined,
  };
  catalogCache.set(meal.id,meal);
  return meal;
@@ -117,7 +123,7 @@ export async function fetchMealById(mealId:string):Promise<Meal|undefined>{
  try{
   const {data,error}=await supabase
    .from('meals')
-   .select('id,slug,type,title,summary,side_dishes,image_path,image_url,cooking_time_minutes,estimated_cost,servings,missing_ingredients,tags,cuisine,difficulty,nutrition')
+   .select('id,slug,type,title,summary,side_dishes,image_path,image_url,cooking_time_minutes,estimated_cost,servings,missing_ingredients,tags,cuisine,difficulty,nutrition,meal_source,purchase_time_minutes,price_per_serving')
    .eq('id',mealId)
    .maybeSingle();
   if(error||!data)return cached;

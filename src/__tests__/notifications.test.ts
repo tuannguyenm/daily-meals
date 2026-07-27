@@ -43,4 +43,15 @@ describe('meal reminders',()=>{
   expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(2);
   expect(Notifications.scheduleNotificationAsync).not.toHaveBeenCalled();
  });
+
+ it('uses purchase reminders and never opens Cooking Mode for ready-made meals',async()=>{
+  const meal={...meals.find(item=>item.mealSource==='ready_made')!,status:'confirmed' as const};
+  await rescheduleMealNotifications({'2026-07-28':{breakfast:meal}},true,30,new Date(2026,6,27,12));
+  expect(Notifications.scheduleNotificationAsync).toHaveBeenNthCalledWith(1,expect.objectContaining({
+   content:expect.objectContaining({title:`Nhắc mua ${meal.title}`,data:{url:`/recipe/${meal.id}`,kind:'purchase',mealId:meal.id}}),
+  }));
+  expect(Notifications.scheduleNotificationAsync).toHaveBeenNthCalledWith(2,expect.objectContaining({
+   content:expect.objectContaining({title:`Đến giờ mua ${meal.title}`,data:{url:`/recipe/${meal.id}`,kind:'purchase-now',mealId:meal.id}}),
+  }));
+ });
 });

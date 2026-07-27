@@ -109,6 +109,18 @@ describe('Daily Meals integration flow',()=>{
   expect(cooking.getByText('Hoàn thành món ăn!')).toBeTruthy();
  });
 
+ it('confirms a ready-made breakfast without exposing recipe or shopping actions',()=>{
+  mockParams={id:'buy-banh-mi-thit'};
+  const detail=render(<Recipe/>);
+  expect(detail.getByText('Món mua sẵn · Không cần nấu')).toBeTruthy();
+  expect(detail.queryByText('Nguyên liệu')).toBeNull();
+  expect(detail.queryByLabelText(/Thêm \d+ nguyên liệu cần mua/)).toBeNull();
+  fireEvent.press(detail.getByLabelText('Xác nhận đã mua'));
+  expect(useAppStore.getState().selectedMeals.breakfast).toMatchObject({id:'buy-banh-mi-thit',status:'completed'});
+  expect(persistMealSelection).toHaveBeenCalledWith(undefined,'breakfast',expect.objectContaining({id:'buy-banh-mi-thit',status:'completed'}),'2026-07-26');
+  detail.unmount();
+ });
+
  it('shows progressive loading and recovers from a simulated error',async()=>{
   useAppStore.setState({shopping:initialShopping});
   mockParams={mealType:'dinner'};

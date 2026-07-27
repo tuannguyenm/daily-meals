@@ -32,6 +32,9 @@ type MealRow = {
   cuisine: string | null
   difficulty: string | null
   nutrition: Record<string, unknown>
+  meal_source: 'home_cooked' | 'ready_made'
+  purchase_time_minutes: number | null
+  price_per_serving: number | null
 }
 
 type FamilyRow = {
@@ -93,6 +96,11 @@ function scoreMeal(meal: MealRow, priorities: string[], history: HistoryRow[]): 
   if (priorities.includes('kid-friendly') || priorities.includes('trẻ em') || priorities.includes('dễ ăn')) {
     score += tags.some((tag) => ['family', 'kid-friendly', 'mild'].includes(tag)) ? 18 : 0
   }
+  if (meal.meal_source === 'ready_made') {
+    if (meal.type === 'breakfast') score += 18
+    if (priorities.includes('quick') || priorities.includes('no-cook')) score += 28
+    if (priorities.includes('budget') && (meal.price_per_serving ?? 999_999) <= 35_000) score += 18
+  }
 
   const mealHistory = history.filter((item) => item.meal_id === meal.id).slice(0, 8)
   for (const item of mealHistory) {
@@ -116,7 +124,10 @@ function rankMeals(meals: MealRow[], priorities: string[], history: HistoryRow[]
 function buildRuleReasons(primary: MealRow, priorities: string[]): string[] {
   const reasons: string[] = []
 
-  if (primary.cooking_time_minutes <= 30) reasons.push(`Hoàn thành trong khoảng ${primary.cooking_time_minutes} phút`)
+  if (primary.meal_source === 'ready_made') {
+    reasons.push(`Có thể mua trong khoảng ${primary.purchase_time_minutes ?? primary.cooking_time_minutes} phút`)
+    reasons.push('Không cần chuẩn bị nguyên liệu hay nấu')
+  } else if (primary.cooking_time_minutes <= 30) reasons.push(`Hoàn thành trong khoảng ${primary.cooking_time_minutes} phút`)
   if (primary.estimated_cost <= 160_000) reasons.push('Chi phí phù hợp với bữa ăn gia đình')
   if (priorities.length > 0) reasons.push(`Phù hợp ưu tiên: ${priorities.slice(0, 2).join(', ')}`)
   if (primary.tags.includes('family')) reasons.push('Hương vị dễ ăn cho cả gia đình')
@@ -247,6 +258,9 @@ async function selectWithOpenAi(args: {
       servings: meal.servings,
       missingIngredients: meal.missing_ingredients,
       tags: meal.tags,
+      mealSource: meal.meal_source,
+      purchaseTimeMinutes: meal.purchase_time_minutes,
+      pricePerServing: meal.price_per_serving,
     })),
   }
 
@@ -405,7 +419,7 @@ Deno.serve(async (request) => {
 
   let mealQuery = client
     .from('meals')
-    .select('id, slug, type, title, summary, side_dishes, image_path, image_url, cooking_time_minutes, estimated_cost, servings, missing_ingredients, tags, cuisine, difficulty, nutrition')
+    .select('id, slug, type, title, summary, side_dishes, image_path, image_url, cooking_time_minutes, estimated_cost, servings, missing_ingredients, tags, cuisine, difficulty, nutrition, meal_source, purchase_time_minutes, price_per_serving')
     .eq('type', mealType)
     .eq('active', true)
     .eq('content_status', 'published')

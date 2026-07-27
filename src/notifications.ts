@@ -56,16 +56,21 @@ export async function rescheduleMealNotifications(plans:WeeklyPlans,enabled:bool
   for(const [rawMealType,meal] of Object.entries(day)){
    const mealType=rawMealType as MealType;
    if(!meal||meal.status==='completed')continue;
-   const cookAt=mealDate(planDate,mealType);
-   if(cookAt>maxDate)continue;
-   const prepareAt=new Date(cookAt.getTime()-preparationMinutes*60*1000);
+   const mealAt=mealDate(planDate,mealType);
+   if(mealAt>maxDate)continue;
+   const prepareAt=new Date(mealAt.getTime()-preparationMinutes*60*1000);
+   const readyMade=meal.mealSource==='ready_made';
    if(prepareAt>now)identifiers.push(await Notifications.scheduleNotificationAsync({
-    content:{title:`Chuẩn bị ${meal.title}`,body:`Còn ${preparationMinutes} phút đến giờ nấu. Kiểm tra và sơ chế nguyên liệu nhé.`,sound:'default',data:{url:`/recipe/${meal.id}`,kind:'prepare',mealId:meal.id}},
+    content:readyMade
+     ?{title:`Nhắc mua ${meal.title}`,body:`Còn ${preparationMinutes} phút đến bữa sáng. Bạn có thể ghé mua trên đường đi.`,sound:'default',data:{url:`/recipe/${meal.id}`,kind:'purchase',mealId:meal.id}}
+     :{title:`Chuẩn bị ${meal.title}`,body:`Còn ${preparationMinutes} phút đến giờ nấu. Kiểm tra và sơ chế nguyên liệu nhé.`,sound:'default',data:{url:`/recipe/${meal.id}`,kind:'prepare',mealId:meal.id}},
     trigger:{type:Notifications.SchedulableTriggerInputTypes.DATE,date:prepareAt,channelId},
    }));
-   if(cookAt>now)identifiers.push(await Notifications.scheduleNotificationAsync({
-    content:{title:`Đến giờ nấu ${meal.title}`,body:`Công thức từng bước đã sẵn sàng cho ${meal.servings} người.`,sound:'default',data:{url:`/cooking/${meal.id}`,kind:'cook',mealId:meal.id}},
-    trigger:{type:Notifications.SchedulableTriggerInputTypes.DATE,date:cookAt,channelId},
+   if(mealAt>now)identifiers.push(await Notifications.scheduleNotificationAsync({
+    content:readyMade
+     ?{title:`Đến giờ mua ${meal.title}`,body:'Mở món ăn để xác nhận sau khi bạn đã mua.',sound:'default',data:{url:`/recipe/${meal.id}`,kind:'purchase-now',mealId:meal.id}}
+     :{title:`Đến giờ nấu ${meal.title}`,body:`Công thức từng bước đã sẵn sàng cho ${meal.servings} người.`,sound:'default',data:{url:`/cooking/${meal.id}`,kind:'cook',mealId:meal.id}},
+    trigger:{type:Notifications.SchedulableTriggerInputTypes.DATE,date:mealAt,channelId},
    }));
   }
  }
