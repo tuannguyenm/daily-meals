@@ -80,7 +80,30 @@ const extraImages:Record<string,Meal['image']>={
  'bun-cha':require('../assets/images/meals/bun-cha.webp'),
 };
 
-const readyMadeBreakfasts:Meal[]=[
+const readyMadeImages:Record<string,Meal['image']>={
+ 'buy-pho-bo':require('../assets/images/meals/ready-made/buy-pho-bo.webp'),
+ 'buy-banh-mi-thit':require('../assets/images/meals/ready-made/buy-banh-mi-thit.webp'),
+ 'buy-bun-bo':require('../assets/images/meals/ready-made/buy-bun-bo.webp'),
+ 'buy-hu-tieu':require('../assets/images/meals/ready-made/buy-hu-tieu.webp'),
+ 'buy-com-tam':require('../assets/images/meals/ready-made/buy-com-tam.webp'),
+ 'buy-xoi-man':require('../assets/images/meals/ready-made/buy-xoi-man.webp'),
+ 'buy-banh-cuon':require('../assets/images/meals/ready-made/buy-banh-cuon.webp'),
+ 'buy-chao-long':require('../assets/images/meals/ready-made/buy-chao-long.webp'),
+ 'buy-banh-uot':require('../assets/images/meals/ready-made/buy-banh-uot.webp'),
+ 'buy-banh-bao':require('../assets/images/meals/ready-made/buy-banh-bao.webp'),
+ 'buy-banh-gio':require('../assets/images/meals/ready-made/buy-banh-gio.webp'),
+ 'buy-bo-kho':require('../assets/images/meals/ready-made/buy-bo-kho.webp'),
+ 'buy-mi-quang':require('../assets/images/meals/ready-made/buy-mi-quang.webp'),
+ 'buy-bun-rieu':require('../assets/images/meals/ready-made/buy-bun-rieu.webp'),
+ 'buy-banh-canh':require('../assets/images/meals/ready-made/buy-banh-canh.webp'),
+ 'buy-mi-hoanh-thanh':require('../assets/images/meals/ready-made/buy-mi-hoanh-thanh.webp'),
+ 'buy-bun-thit-nuong':require('../assets/images/meals/ready-made/buy-bun-thit-nuong.webp'),
+ 'buy-xoi-ga':require('../assets/images/meals/ready-made/buy-xoi-ga.webp'),
+ 'buy-banh-khot':require('../assets/images/meals/ready-made/buy-banh-khot.webp'),
+ 'buy-yogurt-fruit':require('../assets/images/meals/ready-made/buy-yogurt-fruit.webp'),
+};
+
+const readyMadeBreakfastSeeds:Meal[]=[
  {id:'buy-pho-bo',type:'breakfast',title:'Phở bò mua sẵn',sideDishes:['Dễ mua','Ăn tại quán'],image:phoImage,cookingTimeMinutes:12,purchaseTimeMinutes:12,pricePerServing:50000,estimatedCost:200000,servings:4,missingIngredients:[],status:'unconfirmed',mealSource:'ready_made',summary:'Bữa sáng nóng, quen thuộc và dễ tìm gần nhà.',tags:['ready-made','quick','popular']},
  {id:'buy-banh-mi-thit',type:'breakfast',title:'Bánh mì thịt',sideDishes:['Mang đi được','Ăn nhanh'],image:extraImages['banh-mi-op-la'],cookingTimeMinutes:8,purchaseTimeMinutes:8,pricePerServing:25000,estimatedCost:100000,servings:4,missingIngredients:[],status:'unconfirmed',mealSource:'ready_made',summary:'Gọn nhẹ cho buổi sáng bận rộn.',tags:['ready-made','quick','takeaway','budget']},
  {id:'buy-bun-bo',type:'breakfast',title:'Bún bò Huế mua sẵn',sideDishes:['No lâu','Ăn tại quán'],image:extraImages['bun-bo'],cookingTimeMinutes:15,purchaseTimeMinutes:15,pricePerServing:55000,estimatedCost:220000,servings:4,missingIngredients:[],status:'unconfirmed',mealSource:'ready_made',summary:'Đậm vị, phù hợp ngày cần bữa sáng chắc bụng.',tags:['ready-made','popular']},
@@ -102,6 +125,11 @@ const readyMadeBreakfasts:Meal[]=[
  {id:'buy-banh-khot',type:'breakfast',title:'Bánh khọt',sideDishes:['Đổi vị','Ăn tại quán'],image:extraImages['banh-cuon'],cookingTimeMinutes:15,purchaseTimeMinutes:15,pricePerServing:45000,estimatedCost:180000,servings:4,missingIngredients:[],status:'unconfirmed',mealSource:'ready_made',summary:'Một lựa chọn đổi vị cho buổi sáng cuối tuần.',tags:['ready-made','variety']},
  {id:'buy-yogurt-fruit',type:'breakfast',title:'Sữa chua và trái cây',sideDishes:['Nhẹ bụng','Không cần chờ'],image:require('../assets/images/meals/com-nam-sang.webp'),cookingTimeMinutes:5,purchaseTimeMinutes:5,pricePerServing:35000,estimatedCost:140000,servings:4,missingIngredients:[],status:'unconfirmed',mealSource:'ready_made',summary:'Bữa sáng nhẹ, mát và nhanh gọn.',tags:['ready-made','quick','healthy','no-cook']},
 ];
+
+const readyMadeBreakfasts=readyMadeBreakfastSeeds.map(meal=>({
+ ...meal,
+ image:readyMadeImages[meal.id]??meal.image,
+}));
 
 export const meals:Meal[]=[
  ...baseMeals,
