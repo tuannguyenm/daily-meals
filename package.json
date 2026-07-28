@@ -17,6 +17,7 @@
     "catalog:import": "node scripts/catalog/import-catalog.mjs",
     "catalog:smoke": "node scripts/catalog/smoke-catalog.mjs",
     "catalog:prepare-production": "node scripts/catalog/prepare-production.mjs",
+    "catalog:generate-breakfast-migration": "node scripts/catalog/generate-ready-made-expansion-2-migration.mjs",
     "build:android:preview": "eas build --platform android --profile preview",
     "build:android:production": "eas build --platform android --profile production",
     "submit:android:internal": "eas submit --platform android --profile production"

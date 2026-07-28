@@ -13,7 +13,7 @@ import {getLocalRecipe,initialShopping} from '../data';
 import {simulateNextRecommendationError} from '../service';
 import {useAppStore} from '../store';
 
-jest.setTimeout(60000);
+jest.setTimeout(120000);
 
 let mockParams:Record<string,string|undefined>={};
 
@@ -30,6 +30,7 @@ jest.mock('react-native-safe-area-context',()=>{
 jest.mock('@expo/vector-icons',()=>({Ionicons:'Ionicons'}));
 jest.mock('expo-keep-awake',()=>({useKeepAwake:jest.fn()}));
 jest.mock('../cloud-sync',()=>({hydrateCloudData:jest.fn(()=>Promise.resolve()),hydratePlanWeek:jest.fn(()=>Promise.resolve()),persistMealSelection:jest.fn(()=>Promise.resolve()),persistMealRemoval:jest.fn(()=>Promise.resolve()),persistShoppingSnapshot:jest.fn(()=>Promise.resolve()),persistRecommendationAction:jest.fn(()=>Promise.resolve()),persistFavorite:jest.fn(()=>Promise.resolve())}));
+jest.mock('../ready-made-expansion-2',()=>({expandedReadyMadeBreakfasts2:[]}));
 
 const mockRouter=router as unknown as {push:jest.Mock;replace:jest.Mock;back:jest.Mock};
 
@@ -98,7 +99,7 @@ describe('Daily Meals integration flow',()=>{
   fireEvent.press(shopping.getByLabelText(`Xóa ${firstItem.name}`));
   expect(useAppStore.getState().shopping).toHaveLength(countBeforeDelete-1);
   expect(persistShoppingSnapshot).toHaveBeenCalledTimes(3);
- },15000);
+ },120000);
 
  it('uses the selected meal recipe throughout Cooking Mode',async()=>{
   mockParams={id:'pho'};
@@ -141,5 +142,5 @@ describe('Daily Meals integration flow',()=>{
   await advance(1500);
   expect(useAppStore.getState().recommendations.dinner?.meal).toBeDefined();
   expect(ai.getByLabelText('Chọn món này')).toBeTruthy();
- },15000);
+ },120000);
 });

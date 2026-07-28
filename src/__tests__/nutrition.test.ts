@@ -6,7 +6,7 @@ describe('recipe nutrition',()=>{
   for(const meal of meals){
    const nutrition=nutritionForMeal(meal);
    expect(nutrition.perServing).toBe(true);
-   expect(['editorial_recipe_estimate','editorial_serving_estimate']).toContain(nutrition.estimateMethod);
+   expect(['editorial_recipe_estimate','editorial_serving_estimate','editorial_serving_profile']).toContain(nutrition.estimateMethod);
    expect(nutrition.caloriesKcal).toBeGreaterThan(0);
    expect(nutrition.proteinGrams).toBeGreaterThan(0);
    expect(nutrition.carbsGrams).toBeGreaterThan(0);
