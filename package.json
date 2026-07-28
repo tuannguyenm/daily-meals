@@ -20,6 +20,7 @@
     "catalog:generate-breakfast-migration": "node scripts/catalog/generate-ready-made-expansion-2-migration.mjs",
     "catalog:generate-home-cooked": "node scripts/catalog/generate-home-cooked-expansion.mjs && node scripts/catalog/generate-home-cooked-migration.mjs",
     "catalog:generate-home-cooked-2": "node scripts/catalog/generate-home-cooked-expansion-2.mjs && node scripts/catalog/generate-home-cooked-migration.mjs --source=content/home-cooked-expansion-2.json --output=supabase/migrations/202607280015_home_cooked_expansion_2.sql --image-folder=home-cooked-v3 --content-version=4",
+    "catalog:generate-home-cooked-3": "node scripts/catalog/generate-home-cooked-expansion-3.mjs && node scripts/catalog/generate-home-cooked-migration.mjs --source=content/home-cooked-expansion-3.json --output=supabase/migrations/202607280016_home_cooked_expansion_3.sql --image-folder=home-cooked-v4 --content-version=5",
     "build:android:preview": "eas build --platform android --profile preview",
     "build:android:production": "eas build --platform android --profile production",
     "submit:android:internal": "eas submit --platform android --profile production"

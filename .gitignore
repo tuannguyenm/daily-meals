@@ -11,6 +11,7 @@ supabase/.temp/
 .catalog-upload/
 assets/images/meals/home-cooked-v2/*.png
 assets/images/meals/home-cooked-v3/*.png
+assets/images/meals/home-cooked-v4/*.png
 
 android/.gradle/
 android/build/

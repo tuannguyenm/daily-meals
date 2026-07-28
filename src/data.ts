@@ -4,6 +4,7 @@ import {expandedReadyMadeBreakfasts} from './ready-made-expansion';
 import {expandedReadyMadeBreakfasts2} from './ready-made-expansion-2';
 import {expandedHomeCookedMeals,expandedHomeCookedRecipes} from './home-cooked-expansion';
 import {expandedHomeCookedMeals2,expandedHomeCookedRecipes2} from './home-cooked-expansion-2';
+import {expandedHomeCookedMeals3,expandedHomeCookedRecipes3} from './home-cooked-expansion-3';
 
 const chickenMushroomImage=require('../assets/images/meals/ga.webp');
 const fishImage=require('../assets/images/meals/ca.webp');
@@ -147,6 +148,7 @@ export const meals:Meal[]=[
  ...expandedReadyMadeBreakfasts2,
  ...expandedHomeCookedMeals,
  ...expandedHomeCookedMeals2,
+ ...expandedHomeCookedMeals3,
 ];
 
 const recipe=(mealId:string,ingredients:RecipeData['ingredients'],descriptions:string[]):RecipeData=>({
@@ -278,6 +280,7 @@ for(const seed of extraMealSeeds){
 
 Object.assign(localRecipes,expandedHomeCookedRecipes);
 Object.assign(localRecipes,expandedHomeCookedRecipes2);
+Object.assign(localRecipes,expandedHomeCookedRecipes3);
 
 export function getLocalRecipeIfAvailable(mealId:string):RecipeData|undefined{return localRecipes[mealId]}
 export function getLocalRecipe(mealId:string):RecipeData{return getLocalRecipeIfAvailable(mealId)??localRecipes.ga}
