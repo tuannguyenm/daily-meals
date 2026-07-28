@@ -9,6 +9,7 @@ dist/
 
 supabase/.temp/
 .catalog-upload/
+assets/images/meals/home-cooked-v2/*.png
 
 android/.gradle/
 android/build/

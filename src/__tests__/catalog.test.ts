@@ -2,12 +2,13 @@ import {getLocalRecipe,getLocalRecipeIfAvailable,meals} from '../data';
 
 describe('meal catalog',()=>{
  it('contains the cooked catalog plus common ready-made breakfasts',()=>{
-  expect(meals).toHaveLength(200);
-  expect(new Set(meals.map(meal=>meal.id)).size).toBe(200);
+  expect(meals).toHaveLength(300);
+  expect(new Set(meals.map(meal=>meal.id)).size).toBe(300);
   expect(meals.filter(meal=>meal.type==='breakfast')).toHaveLength(180);
-  expect(meals.filter(meal=>meal.type==='lunch')).toHaveLength(10);
-  expect(meals.filter(meal=>meal.type==='dinner')).toHaveLength(10);
+  expect(meals.filter(meal=>meal.type==='lunch')).toHaveLength(60);
+  expect(meals.filter(meal=>meal.type==='dinner')).toHaveLength(60);
   expect(meals.filter(meal=>meal.mealSource==='ready_made')).toHaveLength(170);
+  expect(meals.filter(meal=>meal.mealSource!=='ready_made')).toHaveLength(130);
  });
 
  it.each(meals.filter(meal=>meal.mealSource!=='ready_made').map(meal=>[meal.id,meal.title] as const))(
@@ -27,5 +28,15 @@ describe('meal catalog',()=>{
    expect(meal.missingIngredients).toEqual([]);
    expect(meal.pricePerServing).toBeGreaterThan(0);
   }
+ });
+
+ it('prioritizes lunch, dinner, soups, side dishes and vegetarian home cooking',()=>{
+  const expansion=meals.filter(meal=>meal.tags?.includes('home-cooked')&&meal.id!=='ga');
+  expect(expansion).toHaveLength(100);
+  expect(expansion.filter(meal=>meal.type==='lunch')).toHaveLength(50);
+  expect(expansion.filter(meal=>meal.type==='dinner')).toHaveLength(50);
+  expect(expansion.filter(meal=>meal.tags?.includes('soup')||meal.tags?.includes('side'))).toHaveLength(10);
+  expect(expansion.filter(meal=>meal.tags?.includes('vegetarian'))).toHaveLength(10);
+  expect(expansion.every(meal=>meal.nutrition?.estimateMethod==='editorial_recipe_estimate')).toBe(true);
  });
 });

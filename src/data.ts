@@ -2,6 +2,7 @@ import {Meal,RecipeData,ShoppingItem} from './types';
 import curatedExtraRecipes from '../content/curated-extra-recipes.json';
 import {expandedReadyMadeBreakfasts} from './ready-made-expansion';
 import {expandedReadyMadeBreakfasts2} from './ready-made-expansion-2';
+import {expandedHomeCookedMeals,expandedHomeCookedRecipes} from './home-cooked-expansion';
 
 const chickenMushroomImage=require('../assets/images/meals/ga.webp');
 const fishImage=require('../assets/images/meals/ca.webp');
@@ -143,6 +144,7 @@ export const meals:Meal[]=[
  ...readyMadeBreakfasts,
  ...expandedReadyMadeBreakfasts,
  ...expandedReadyMadeBreakfasts2,
+ ...expandedHomeCookedMeals,
 ];
 
 const recipe=(mealId:string,ingredients:RecipeData['ingredients'],descriptions:string[]):RecipeData=>({
@@ -271,6 +273,8 @@ for(const seed of extraMealSeeds){
   curated.steps,
  );
 }
+
+Object.assign(localRecipes,expandedHomeCookedRecipes);
 
 export function getLocalRecipeIfAvailable(mealId:string):RecipeData|undefined{return localRecipes[mealId]}
 export function getLocalRecipe(mealId:string):RecipeData{return getLocalRecipeIfAvailable(mealId)??localRecipes.ga}
