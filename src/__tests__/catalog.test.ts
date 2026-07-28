@@ -2,13 +2,22 @@ import {getLocalRecipe,getLocalRecipeIfAvailable,meals} from '../data';
 
 describe('meal catalog',()=>{
  it('contains the cooked catalog plus common ready-made breakfasts',()=>{
-  expect(meals).toHaveLength(300);
-  expect(new Set(meals.map(meal=>meal.id)).size).toBe(300);
+  expect(meals).toHaveLength(400);
+  expect(new Set(meals.map(meal=>meal.id)).size).toBe(400);
   expect(meals.filter(meal=>meal.type==='breakfast')).toHaveLength(180);
-  expect(meals.filter(meal=>meal.type==='lunch')).toHaveLength(60);
-  expect(meals.filter(meal=>meal.type==='dinner')).toHaveLength(60);
+  expect(meals.filter(meal=>meal.type==='lunch')).toHaveLength(110);
+  expect(meals.filter(meal=>meal.type==='dinner')).toHaveLength(110);
   expect(meals.filter(meal=>meal.mealSource==='ready_made')).toHaveLength(170);
-  expect(meals.filter(meal=>meal.mealSource!=='ready_made')).toHaveLength(130);
+  expect(meals.filter(meal=>meal.mealSource!=='ready_made')).toHaveLength(230);
+ });
+
+ it('adds a second balanced lunch and dinner home-cooked expansion',()=>{
+  const expansion=meals.filter(meal=>meal.tags?.includes('home-cooked-v3'));
+  expect(expansion).toHaveLength(100);
+  expect(expansion.filter(meal=>meal.type==='lunch')).toHaveLength(50);
+  expect(expansion.filter(meal=>meal.type==='dinner')).toHaveLength(50);
+  expect(expansion.filter(meal=>meal.tags?.includes('soup')||meal.tags?.includes('side'))).toHaveLength(10);
+  expect(expansion.filter(meal=>meal.tags?.includes('vegetarian'))).toHaveLength(10);
  });
 
  it.each(meals.filter(meal=>meal.mealSource!=='ready_made').map(meal=>[meal.id,meal.title] as const))(

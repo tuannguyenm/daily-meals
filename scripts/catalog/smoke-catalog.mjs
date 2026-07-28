@@ -47,11 +47,22 @@ try{
  const readyIds=readyMeals.map(meal=>meal.id);
  const {count:readyRecipeCount,error:readyRecipeError}=await client.from('recipe_steps').select('id',{count:'exact',head:true}).in('meal_id',readyIds);
  if(readyRecipeError)throw readyRecipeError;
- const imageStatuses=await Promise.all(mealRows.map(async meal=>{
+ const imageStatuses=[];
+ const wait=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
+ const checkImage=async meal=>{
   if(!meal.image_path)return 0;
   const imageUrl=client.storage.from('meal-images').getPublicUrl(meal.image_path).data.publicUrl;
+  for(let attempt=0;attempt<3;attempt++){
+   const status=(await fetch(imageUrl,{method:'HEAD'})).status;
+   if(status!==429&&status<500)return status;
+   await wait(250*(attempt+1));
+  }
   return(await fetch(imageUrl,{method:'HEAD'})).status;
- }));
+ };
+ for(let index=0;index<mealRows.length;index+=20){
+  imageStatuses.push(...await Promise.all(mealRows.slice(index,index+20).map(checkImage)));
+  await wait(75);
+ }
  console.log(JSON.stringify({
   pageRows:data.length,
   total:Number(data[0]?.total_count??0),
